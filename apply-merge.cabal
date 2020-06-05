@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: cc405604f78fb4c0fa0c53e48859bd388b8a13ccf8bda8afa8cae945c462e741
+-- hash: 7923bb8dc7f65ad940fd7c418491e3bd2bd827e8917f912b57e209168441114d
 
 name:           apply-merge
 version:        0.1.0.0
@@ -27,10 +27,8 @@ library
   hs-source-dirs:
       src
   build-depends:
-      Agda
-    , base >=4.7 && <5
+      base >=4.7 && <5
     , containers
-    , deepseq
     , mtl
     , optics
     , pqueue

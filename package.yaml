@@ -29,8 +29,6 @@ library:
   - mtl
   - pqueue
   - optics
-  - deepseq
-  - Agda
 
 executables:
   apply-merge-test:
