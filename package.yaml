@@ -1,0 +1,43 @@
+name:                apply-merge
+version:             0.1.0.0
+#github:              "githubuser/apply-merge"
+license:             BSD3
+author:              "Preetham Gujjula"
+maintainer:          "pgujjula+apply-merge@protonmail.com"
+copyright:           "2020 Preetham Gujjula"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/apply-merge#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+  dependencies:
+  - containers
+  - mtl
+  - pqueue
+  - optics
+  - deepseq
+  - Agda
+
+executables:
+  apply-merge-test:
+    main: Spec.hs
+    source-dirs: test
+    dependencies:
+    - apply-merge
+    - list-filter
+    - data-ordlist
+    - list-duplicate

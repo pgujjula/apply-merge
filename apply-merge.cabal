@@ -1,0 +1,51 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: cc405604f78fb4c0fa0c53e48859bd388b8a13ccf8bda8afa8cae945c462e741
+
+name:           apply-merge
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/apply-merge#readme>
+author:         Preetham Gujjula
+maintainer:     pgujjula+apply-merge@protonmail.com
+copyright:      2020 Preetham Gujjula
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+library
+  exposed-modules:
+      Data.List.Merge
+  other-modules:
+      Paths_apply_merge
+  hs-source-dirs:
+      src
+  build-depends:
+      Agda
+    , base >=4.7 && <5
+    , containers
+    , deepseq
+    , mtl
+    , optics
+    , pqueue
+  default-language: Haskell2010
+
+executable apply-merge-test
+  main-is: Spec.hs
+  other-modules:
+      Paths_apply_merge
+  hs-source-dirs:
+      test
+  build-depends:
+      apply-merge
+    , base >=4.7 && <5
+    , data-ordlist
+    , list-duplicate
+    , list-filter
+  default-language: Haskell2010
