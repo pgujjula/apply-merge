@@ -58,3 +58,19 @@ test-suite apply-merge-tests
     , tasty
     , tasty-hunit
   default-language: GHC2021
+
+benchmark apply-merge-benchmarks
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_apply_merge
+  autogen-modules:
+      Paths_apply_merge
+  hs-source-dirs:
+      bench
+  ghc-options: -Wall
+  build-depends:
+      apply-merge
+    , base >=4.16 && <5
+    , tasty-bench
+  default-language: GHC2021

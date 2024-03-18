@@ -48,3 +48,11 @@ tests:
     - apply-merge
     - tasty
     - tasty-hunit
+
+benchmarks:
+  apply-merge-benchmarks:
+    source-dirs: bench
+    main: Main.hs
+    dependencies:
+    - apply-merge
+    - tasty-bench
