@@ -25,6 +25,7 @@ source-repository head
 library
   exposed-modules:
       Data.List.ApplyMerge
+      Data.List.ApplyMerge.IntMap
   other-modules:
       Paths_apply_merge
   autogen-modules:
@@ -34,4 +35,24 @@ library
   ghc-options: -Wall
   build-depends:
       base >=4.16 && <5
+    , containers
+    , mtl
+    , optics
+    , pqueue
+  default-language: GHC2021
+
+test-suite apply-merge-tests
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Test.Data.List.ApplyMerge.Common
+      Test.Data.List.ApplyMerge.IntMap
+  hs-source-dirs:
+      test
+  ghc-options: -Wall
+  build-depends:
+      apply-merge
+    , base >=4.16 && <5
+    , tasty
+    , tasty-hunit
   default-language: GHC2021

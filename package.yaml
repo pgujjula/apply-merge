@@ -28,3 +28,21 @@ library:
   source-dirs: src
   exposed-modules:
   - Data.List.ApplyMerge
+  - Data.List.ApplyMerge.IntMap
+  dependencies:
+  - containers
+  - mtl
+  - optics
+  - pqueue
+
+tests:
+  apply-merge-tests:
+    source-dirs: test
+    main: Main.hs
+    other-modules:
+    - Test.Data.List.ApplyMerge.Common
+    - Test.Data.List.ApplyMerge.IntMap
+    dependencies:
+    - apply-merge
+    - tasty
+    - tasty-hunit
