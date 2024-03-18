@@ -1,0 +1,37 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.36.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           apply-merge
+version:        0.0.0.0
+description:    Please see the README on GitHub at <https://github.com/pgujjula/apply-merge#readme>
+homepage:       https://github.com/pgujjula/apply-merge#readme
+bug-reports:    https://github.com/pgujjula/apply-merge/issues
+author:         Preetham Gujjula
+maintainer:     libraries@mail.preetham.io
+copyright:      Preetham Gujjula
+license:        BSD-3-Clause
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/pgujjula/apply-merge
+
+library
+  exposed-modules:
+      Data.List.ApplyMerge
+  other-modules:
+      Paths_apply_merge
+  autogen-modules:
+      Paths_apply_merge
+  hs-source-dirs:
+      src
+  ghc-options: -Wall
+  build-depends:
+      base >=4.16 && <5
+  default-language: GHC2021

@@ -1,0 +1,6 @@
+# SPDX-FileCopyrightText: Copyright Preetham Gujjula
+# SPDX-License-Identifier: CC0-1.0
+
+/.stack-work/
+/dist-newstyle/
+/stack.yaml.lock

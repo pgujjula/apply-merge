@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: Copyright Preetham Gujjula
+# SPDX-License-Identifier: BSD-3-Clause
+
+name:       apply-merge
+version:    0.0.0.0
+github:     "pgujjula/apply-merge"
+license:    BSD-3-Clause
+author:     "Preetham Gujjula"
+maintainer: "libraries@mail.preetham.io"
+copyright:  "Preetham Gujjula"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+description: Please see the README on GitHub at
+  <https://github.com/pgujjula/apply-merge#readme>
+
+ghc-options:
+- -Wall
+
+dependencies:
+- base >= 4.16 && < 5
+
+language: GHC2021
+
+library:
+  source-dirs: src
+  exposed-modules:
+  - Data.List.ApplyMerge
