@@ -29,6 +29,7 @@ library:
   exposed-modules:
   - Data.List.ApplyMerge
   - Data.List.ApplyMerge.IntMap
+  - Data.List.ApplyMerge.IntSet
   dependencies:
   - containers
   - mtl
@@ -42,6 +43,7 @@ tests:
     other-modules:
     - Test.Data.List.ApplyMerge.Common
     - Test.Data.List.ApplyMerge.IntMap
+    - Test.Data.List.ApplyMerge.IntSet
     dependencies:
     - apply-merge
     - tasty

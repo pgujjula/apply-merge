@@ -26,6 +26,7 @@ library
   exposed-modules:
       Data.List.ApplyMerge
       Data.List.ApplyMerge.IntMap
+      Data.List.ApplyMerge.IntSet
   other-modules:
       Paths_apply_merge
   autogen-modules:
@@ -47,6 +48,7 @@ test-suite apply-merge-tests
   other-modules:
       Test.Data.List.ApplyMerge.Common
       Test.Data.List.ApplyMerge.IntMap
+      Test.Data.List.ApplyMerge.IntSet
   hs-source-dirs:
       test
   ghc-options: -Wall
