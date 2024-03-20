@@ -11,7 +11,7 @@ import Data.PQueue.Prio.Min (MinPQueue)
 import Data.PQueue.Prio.Min qualified as MinPQueue
 
 data Node a b c = Node
-  { _location :: (Int, Int),
+  { _position :: (Int, Int),
     _as :: [a],
     _bs :: [b]
   }
@@ -35,7 +35,7 @@ deleteMinNode = do
     frontier' {_queue = q'}
 
   -- Remove minimal node from locationMap
-  let (y, _) = _location node
+  let (y, _) = _position node
   State.modify $ \frontier ->
     frontier
       { _locationMap = IntMap.delete y (_locationMap frontier)
@@ -52,7 +52,7 @@ initialFrontier f as bs =
     c = f (head as) (head bs)
     node =
       Node
-        { _location = (0, 0),
+        { _position = (0, 0),
           _as = as,
           _bs = bs
         }
@@ -60,7 +60,7 @@ initialFrontier f as bs =
 step :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) c
 step f = do
   (value, node) <- deleteMinNode
-  let (y, x) = _location node
+  let (y, x) = _position node
 
   -- Add the node below to the queue and location map
   maybeYDown <- State.gets (fmap fst . IntMap.lookupGT y . _locationMap)
@@ -74,7 +74,7 @@ step f = do
         locationDown = (y + 1, x)
         nodeDown =
           Node
-            { _location = locationDown,
+            { _position = locationDown,
               _as = asDown,
               _bs = bsDown
             }
@@ -96,7 +96,7 @@ step f = do
         locationRight = (y, x + 1)
         nodeRight =
           Node
-            { _location = locationRight,
+            { _position = locationRight,
               _as = asRight,
               _bs = bsRight
             }
