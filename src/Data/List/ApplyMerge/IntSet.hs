@@ -5,13 +5,14 @@
 
 module Data.List.ApplyMerge.IntSet (applyMerge) where
 
-import Data.Function (on)
+import Control.Monad (guard)
+import Data.Function (on, (&))
 import Data.IntSet (IntSet)
 import Data.IntSet qualified as IntSet
-import Data.List (foldl', unfoldr)
+import Data.List (unfoldr)
 import Data.List.NonEmpty (NonEmpty, nonEmpty)
 import Data.List.NonEmpty qualified as NonEmpty
-import Data.Maybe (catMaybes, fromMaybe)
+import Data.Maybe (fromMaybe)
 import Data.Ord (comparing)
 import Data.PQueue.Min (MinQueue)
 import Data.PQueue.Min qualified as MinQueue
@@ -44,7 +45,10 @@ applyMerge f as bs = fromMaybe [] $ do
 step :: (Ord c) => (a -> b -> c) -> Frontier a b c -> Maybe (c, Frontier a b c)
 step f frontier = do
   (node, frontier') <- deleteMinNode frontier
-  let frontier'' = foldl' (flip insertNode) frontier' (childrenNodes f node)
+  let frontier'' =
+        frontier'
+          & insertChildA f node
+          & insertChildB f node
   pure (node.value, frontier'')
 
 initialFrontier :: (a -> b -> c) -> NonEmpty a -> NonEmpty b -> Frontier a b c
@@ -68,31 +72,30 @@ deleteMinNode frontier = do
           }
   pure (node, frontier')
 
+insertChildA ::
+  (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
+insertChildA f (Node (ia, ib) _ as bs) frontier = fromMaybe frontier $ do
+  guard (not (IntSet.member (ia + 1) frontier.indexSetA))
+  as' <- nonEmpty (NonEmpty.tail as)
+  let childA = mkNode f (ia + 1, ib) as' bs
+  pure $ insertNode childA frontier
+
+insertChildB ::
+  (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
+insertChildB f (Node (ia, ib) _ as bs) frontier = fromMaybe frontier $ do
+  guard (not (IntSet.member (ib + 1) frontier.indexSetB))
+  bs' <- nonEmpty (NonEmpty.tail bs)
+  let childB = mkNode f (ia, ib + 1) as bs'
+  pure $ insertNode childB frontier
+
 insertNode :: (Ord c) => Node a b c -> Frontier a b c -> Frontier a b c
 insertNode node frontier =
   let (ia, ib) = node.position
-   in if IntSet.member ia frontier.indexSetA
-        || IntSet.member ib frontier.indexSetB
-        then frontier
-        else
-          Frontier
-            { queue = MinQueue.insert node frontier.queue,
-              indexSetA = IntSet.insert ia frontier.indexSetA,
-              indexSetB = IntSet.insert ib frontier.indexSetB
-            }
-
-childrenNodes :: forall a b c. (a -> b -> c) -> Node a b c -> [Node a b c]
-childrenNodes f (Node (ia, ib) _ as bs) = catMaybes [childA, childB]
-  where
-    childA :: Maybe (Node a b c)
-    childA = do
-      as' <- nonEmpty (NonEmpty.tail as)
-      pure (mkNode f (ia + 1, ib) as' bs)
-
-    childB :: Maybe (Node a b c)
-    childB = do
-      bs' <- nonEmpty (NonEmpty.tail bs)
-      pure (mkNode f (ia, ib + 1) as bs')
+   in Frontier
+        { queue = MinQueue.insert node frontier.queue,
+          indexSetA = IntSet.insert ia frontier.indexSetA,
+          indexSetB = IntSet.insert ib frontier.indexSetB
+        }
 
 mkNode :: (a -> b -> c) -> (Int, Int) -> NonEmpty a -> NonEmpty b -> Node a b c
 mkNode f (ia, ib) as bs =
