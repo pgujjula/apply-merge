@@ -17,17 +17,17 @@ import Data.PQueue.Min (MinQueue)
 import Data.PQueue.Min qualified as MinQueue
 
 data Node a b c = Node
-  { pos :: (Int, Int),
-    val :: c,
+  { position :: (Int, Int),
+    value :: c,
     as :: NonEmpty a,
     bs :: NonEmpty b
   }
 
 instance (Eq c) => Eq (Node a b c) where
-  (==) = (==) `on` (\node -> node.val)
+  (==) = (==) `on` (\node -> node.value)
 
 instance (Ord c) => Ord (Node a b c) where
-  compare = comparing (\node -> node.val)
+  compare = comparing (\node -> node.value)
 
 data Frontier a b c = Frontier
   { queue :: MinQueue (Node a b c),
@@ -45,7 +45,7 @@ step :: (Ord c) => (a -> b -> c) -> Frontier a b c -> Maybe (c, Frontier a b c)
 step f frontier = do
   (node, frontier') <- deleteMinNode frontier
   let frontier'' = foldl' (flip insertNode) frontier' (childrenNodes f node)
-  pure (node.val, frontier'')
+  pure (node.value, frontier'')
 
 initialFrontier :: (a -> b -> c) -> NonEmpty a -> NonEmpty b -> Frontier a b c
 initialFrontier f as bs =
@@ -59,7 +59,7 @@ initialFrontier f as bs =
 deleteMinNode :: (Ord c) => Frontier a b c -> Maybe (Node a b c, Frontier a b c)
 deleteMinNode frontier = do
   (node, queue') <- MinQueue.minView frontier.queue
-  let (ia, ib) = node.pos
+  let (ia, ib) = node.position
       frontier' =
         Frontier
           { queue = queue',
@@ -70,7 +70,7 @@ deleteMinNode frontier = do
 
 insertNode :: (Ord c) => Node a b c -> Frontier a b c -> Frontier a b c
 insertNode node frontier =
-  let (ia, ib) = node.pos
+  let (ia, ib) = node.position
    in if IntSet.member ia frontier.indexSetA
         || IntSet.member ib frontier.indexSetB
         then frontier
@@ -97,8 +97,8 @@ childrenNodes f (Node (ia, ib) _ as bs) = catMaybes [childA, childB]
 mkNode :: (a -> b -> c) -> (Int, Int) -> NonEmpty a -> NonEmpty b -> Node a b c
 mkNode f (ia, ib) as bs =
   Node
-    { pos = (ia, ib),
-      val = f (NonEmpty.head as) (NonEmpty.head bs),
+    { position = (ia, ib),
+      value = f (NonEmpty.head as) (NonEmpty.head bs),
       as = as,
       bs = bs
     }
