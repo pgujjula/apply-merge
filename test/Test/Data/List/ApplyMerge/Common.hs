@@ -14,8 +14,9 @@ import Data.List (sort)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 
-basicTest ::
-  (forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]) -> TestTree
+type ApplyMerge = forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
+
+basicTest :: ApplyMerge -> TestTree
 basicTest applyMerge =
   testGroup
     "basic tests"
@@ -57,8 +58,7 @@ basicTest applyMerge =
          in take 100 (applyMerge (+) xs xs) @?= expected
     ]
 
-skewedTest ::
-  (forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]) -> TestTree
+skewedTest :: ApplyMerge -> TestTree
 skewedTest applyMerge =
   testGroup
     "skewed tests"
@@ -80,8 +80,7 @@ skewedTest applyMerge =
          in take 100 (applyMerge (flip (^)) exps bases) @?= expected
     ]
 
-blockTest ::
-  (forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]) -> TestTree
+blockTest :: ApplyMerge -> TestTree
 blockTest applyMerge =
   testGroup
     "block tests"
@@ -98,8 +97,7 @@ blockTest applyMerge =
            in take 100 (applyMerge f xs xs) @?= expected
     ]
 
-maxTest ::
-  (forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]) -> TestTree
+maxTest :: ApplyMerge -> TestTree
 maxTest applyMerge =
   testGroup
     "max tests"
