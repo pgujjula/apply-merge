@@ -1,5 +1,8 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE OverloadedRecordDot #-}
+{-# LANGUAGE NoFieldSelectors #-}
+
 module Data.List.ApplyMerge.IntMap (applyMerge) where
 
 import Control.Monad (when)
@@ -29,16 +32,16 @@ applyMerge f as bs = State.evalState (generate f) (initialFrontier f as bs)
 deleteMinNode :: (Ord c) => State (Frontier a b c) (c, Node a b c)
 deleteMinNode = do
   -- Remove minimal node from queue
-  q <- State.gets _queue
+  q <- State.gets (._queue)
   let ((value, node), q') = MinPQueue.deleteFindMin q
   State.modify $ \frontier' ->
     frontier' {_queue = q'}
 
   -- Remove minimal node from locationMap
-  let (y, _) = _position node
+  let (y, _) = node._position
   State.modify $ \frontier ->
     frontier
-      { _locationMap = IntMap.delete y (_locationMap frontier)
+      { _locationMap = IntMap.delete y frontier._locationMap
       }
   pure (value, node)
 
@@ -60,16 +63,16 @@ initialFrontier f as bs =
 step :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) c
 step f = do
   (value, node) <- deleteMinNode
-  let (y, x) = _position node
+  let (y, x) = node._position
 
   -- Add the node below to the queue and location map
-  maybeYDown <- State.gets (fmap fst . IntMap.lookupGT y . _locationMap)
+  maybeYDown <- State.gets (fmap fst . IntMap.lookupGT y . (._locationMap))
   let addDown =
         maybeYDown /= Just (y + 1)
-          && (not . null . tail . _as $ node)
+          && (not . null . tail $ node._as)
   when addDown $ do
-    let asDown = tail . _as $ node
-        bsDown = _bs node
+    let asDown = tail node._as
+        bsDown = node._bs
         valueDown = f (head asDown) (head bsDown)
         locationDown = (y + 1, x)
         nodeDown =
@@ -80,18 +83,18 @@ step f = do
             }
     State.modify $ \frontier ->
       frontier
-        { _queue = MinPQueue.insert valueDown nodeDown (_queue frontier),
-          _locationMap = IntMap.insert (y + 1) x (_locationMap frontier)
+        { _queue = MinPQueue.insert valueDown nodeDown frontier._queue,
+          _locationMap = IntMap.insert (y + 1) x frontier._locationMap
         }
 
   -- Add the node to the right to the queue and location map
-  maybeXRight <- State.gets (fmap snd . IntMap.lookupLT y . _locationMap)
+  maybeXRight <- State.gets (fmap snd . IntMap.lookupLT y . (._locationMap))
   let addRight =
         maybeXRight /= Just (x + 1)
-          && (not . null . tail . _bs $ node)
+          && (not . null . tail $ node._bs)
   when addRight $ do
-    let asRight = _as node
-        bsRight = tail . _bs $ node
+    let asRight = node._as
+        bsRight = tail node._bs
         valueRight = f (head asRight) (head bsRight)
         locationRight = (y, x + 1)
         nodeRight =
@@ -102,14 +105,14 @@ step f = do
             }
     State.modify $ \frontier ->
       frontier
-        { _queue = MinPQueue.insert valueRight nodeRight (_queue frontier),
-          _locationMap = IntMap.insert y (x + 1) (_locationMap frontier)
+        { _queue = MinPQueue.insert valueRight nodeRight frontier._queue,
+          _locationMap = IntMap.insert y (x + 1) frontier._locationMap
         }
   pure value
 
 generate :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) [c]
 generate f = do
-  q <- State.gets _queue
+  q <- State.gets (._queue)
   if MinPQueue.null q
     then pure []
     else (:) <$> step f <*> generate f
