@@ -8,6 +8,7 @@ module Data.List.ApplyMerge.IntMap (applyMerge) where
 import Control.Monad (guard)
 import Control.Monad.State (State)
 import Control.Monad.State qualified as State
+import Data.Function ((&))
 import Data.IntMap.Strict (IntMap)
 import Data.IntMap.Strict qualified as IntMap
 import Data.Maybe (fromMaybe)
@@ -45,14 +46,16 @@ generate f = do
   q <- State.gets (.queue)
   if MinPQueue.null q
     then pure []
-    else (:) <$> step f <*> generate f
+    else (:) <$> State.state (step f) <*> generate f
 
-step :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) c
-step f = do
-  (value, node) <- State.state deleteMinNode
-  State.modify' $ insertChildA f node
-  State.modify' $ insertChildB f node
-  pure value
+step :: (Ord c) => (a -> b -> c) -> Frontier a b c -> (c, Frontier a b c)
+step f frontier = do
+  let ((value, node), frontier') = deleteMinNode frontier
+  let frontier'' =
+        frontier'
+          & insertChildA f node
+          & insertChildB f node
+   in (value, frontier'')
 
 deleteMinNode :: (Ord c) => Frontier a b c -> ((c, Node a b c), Frontier a b c)
 deleteMinNode frontier =
