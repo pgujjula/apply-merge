@@ -14,14 +14,14 @@ import Data.PQueue.Prio.Min (MinPQueue)
 import Data.PQueue.Prio.Min qualified as MinPQueue
 
 data Node a b c = Node
-  { _position :: (Int, Int),
-    _as :: [a],
-    _bs :: [b]
+  { position :: (Int, Int),
+    as :: [a],
+    bs :: [b]
   }
 
 data Frontier a b c = Frontier
-  { _queue :: MinPQueue c (Node a b c),
-    _locationMap :: IntMap Int
+  { queue :: MinPQueue c (Node a b c),
+    locationMap :: IntMap Int
   }
 
 applyMerge :: (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
@@ -32,87 +32,87 @@ applyMerge f as bs = State.evalState (generate f) (initialFrontier f as bs)
 deleteMinNode :: (Ord c) => State (Frontier a b c) (c, Node a b c)
 deleteMinNode = do
   -- Remove minimal node from queue
-  q <- State.gets (._queue)
+  q <- State.gets (.queue)
   let ((value, node), q') = MinPQueue.deleteFindMin q
   State.modify $ \frontier' ->
-    frontier' {_queue = q'}
+    frontier' {queue = q'}
 
   -- Remove minimal node from locationMap
-  let (y, _) = node._position
+  let (y, _) = node.position
   State.modify $ \frontier ->
     frontier
-      { _locationMap = IntMap.delete y frontier._locationMap
+      { locationMap = IntMap.delete y frontier.locationMap
       }
   pure (value, node)
 
 initialFrontier :: (a -> b -> c) -> [a] -> [b] -> Frontier a b c
 initialFrontier f as bs =
   Frontier
-    { _queue = MinPQueue.singleton c node,
-      _locationMap = IntMap.singleton 0 0
+    { queue = MinPQueue.singleton c node,
+      locationMap = IntMap.singleton 0 0
     }
   where
     c = f (head as) (head bs)
     node =
       Node
-        { _position = (0, 0),
-          _as = as,
-          _bs = bs
+        { position = (0, 0),
+          as = as,
+          bs = bs
         }
 
 step :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) c
 step f = do
   (value, node) <- deleteMinNode
-  let (y, x) = node._position
+  let (y, x) = node.position
 
   -- Add the node below to the queue and location map
-  maybeYDown <- State.gets (fmap fst . IntMap.lookupGT y . (._locationMap))
+  maybeYDown <- State.gets (fmap fst . IntMap.lookupGT y . (.locationMap))
   let addDown =
         maybeYDown /= Just (y + 1)
-          && (not . null . tail $ node._as)
+          && (not . null . tail $ node.as)
   when addDown $ do
-    let asDown = tail node._as
-        bsDown = node._bs
+    let asDown = tail node.as
+        bsDown = node.bs
         valueDown = f (head asDown) (head bsDown)
         locationDown = (y + 1, x)
         nodeDown =
           Node
-            { _position = locationDown,
-              _as = asDown,
-              _bs = bsDown
+            { position = locationDown,
+              as = asDown,
+              bs = bsDown
             }
     State.modify $ \frontier ->
       frontier
-        { _queue = MinPQueue.insert valueDown nodeDown frontier._queue,
-          _locationMap = IntMap.insert (y + 1) x frontier._locationMap
+        { queue = MinPQueue.insert valueDown nodeDown frontier.queue,
+          locationMap = IntMap.insert (y + 1) x frontier.locationMap
         }
 
   -- Add the node to the right to the queue and location map
-  maybeXRight <- State.gets (fmap snd . IntMap.lookupLT y . (._locationMap))
+  maybeXRight <- State.gets (fmap snd . IntMap.lookupLT y . (.locationMap))
   let addRight =
         maybeXRight /= Just (x + 1)
-          && (not . null . tail $ node._bs)
+          && (not . null . tail $ node.bs)
   when addRight $ do
-    let asRight = node._as
-        bsRight = tail node._bs
+    let asRight = node.as
+        bsRight = tail node.bs
         valueRight = f (head asRight) (head bsRight)
         locationRight = (y, x + 1)
         nodeRight =
           Node
-            { _position = locationRight,
-              _as = asRight,
-              _bs = bsRight
+            { position = locationRight,
+              as = asRight,
+              bs = bsRight
             }
     State.modify $ \frontier ->
       frontier
-        { _queue = MinPQueue.insert valueRight nodeRight frontier._queue,
-          _locationMap = IntMap.insert y (x + 1) frontier._locationMap
+        { queue = MinPQueue.insert valueRight nodeRight frontier.queue,
+          locationMap = IntMap.insert y (x + 1) frontier.locationMap
         }
   pure value
 
 generate :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) [c]
 generate f = do
-  q <- State.gets (._queue)
+  q <- State.gets (.queue)
   if MinPQueue.null q
     then pure []
     else (:) <$> step f <*> generate f
