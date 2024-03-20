@@ -3,5 +3,7 @@
 
 module Data.List.ApplyMerge (applyMerge) where
 
+import Data.List.ApplyMerge.IntMap qualified
+
 applyMerge :: (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
-applyMerge = error "applyMerge: unimplemented"
+applyMerge = Data.List.ApplyMerge.IntMap.applyMerge
