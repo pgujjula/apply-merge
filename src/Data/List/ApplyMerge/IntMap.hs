@@ -36,13 +36,11 @@ applyMerge f as bs = fromMaybe [] $ do
 
 initialFrontier :: (a -> b -> c) -> NonEmpty a -> NonEmpty b -> Frontier a b c
 initialFrontier f as bs =
-  Frontier
-    { queue = MinPQueue.singleton c node,
-      locationMap = IntMap.singleton 0 0
-    }
-  where
-    c = f (NonEmpty.head as) (NonEmpty.head bs)
-    node = mkNode f (0, 0) as bs
+  let node = mkNode f (0, 0) as bs
+   in Frontier
+        { queue = MinPQueue.singleton node.value node,
+          locationMap = IntMap.singleton 0 0
+        }
 
 step ::
   (Ord c) => (a -> b -> c) -> Frontier a b c -> Maybe (c, Frontier a b c)

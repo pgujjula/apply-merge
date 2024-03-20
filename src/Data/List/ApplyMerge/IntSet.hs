@@ -44,9 +44,9 @@ applyMerge f as bs = fromMaybe [] $ do
 
 initialFrontier :: (a -> b -> c) -> NonEmpty a -> NonEmpty b -> Frontier a b c
 initialFrontier f as bs =
-  let initialNode = mkNode f (0, 0) as bs
+  let node = mkNode f (0, 0) as bs
    in Frontier
-        { queue = MinQueue.singleton initialNode,
+        { queue = MinQueue.singleton node,
           indexSetA = IntSet.singleton 0,
           indexSetB = IntSet.singleton 0
         }
