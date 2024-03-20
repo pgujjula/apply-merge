@@ -12,8 +12,8 @@ import Data.PQueue.Prio.Min qualified as MinPQueue
 
 data Node a b c = Node
   { _location :: (Int, Int),
-    _downList :: [a],
-    _rightList :: [b]
+    _as :: [a],
+    _bs :: [b]
   }
 
 data Frontier a b c = Frontier
@@ -53,8 +53,8 @@ initialFrontier f as bs =
     node =
       Node
         { _location = (0, 0),
-          _downList = as,
-          _rightList = bs
+          _as = as,
+          _bs = bs
         }
 
 step :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) c
@@ -66,17 +66,17 @@ step f = do
   maybeYDown <- State.gets (fmap fst . IntMap.lookupGT y . _locationMap)
   let addDown =
         maybeYDown /= Just (y + 1)
-          && (not . null . tail . _downList $ node)
+          && (not . null . tail . _as $ node)
   when addDown $ do
-    let asDown = tail . _downList $ node
-        bsDown = _rightList node
+    let asDown = tail . _as $ node
+        bsDown = _bs node
         valueDown = f (head asDown) (head bsDown)
         locationDown = (y + 1, x)
         nodeDown =
           Node
             { _location = locationDown,
-              _downList = asDown,
-              _rightList = bsDown
+              _as = asDown,
+              _bs = bsDown
             }
     State.modify $ \frontier ->
       frontier
@@ -88,17 +88,17 @@ step f = do
   maybeXRight <- State.gets (fmap snd . IntMap.lookupLT y . _locationMap)
   let addRight =
         maybeXRight /= Just (x + 1)
-          && (not . null . tail . _rightList $ node)
+          && (not . null . tail . _bs $ node)
   when addRight $ do
-    let asRight = _downList node
-        bsRight = tail . _rightList $ node
+    let asRight = _as node
+        bsRight = tail . _bs $ node
         valueRight = f (head asRight) (head bsRight)
         locationRight = (y, x + 1)
         nodeRight =
           Node
             { _location = locationRight,
-              _downList = asRight,
-              _rightList = bsRight
+              _as = asRight,
+              _bs = bsRight
             }
     State.modify $ \frontier ->
       frontier
