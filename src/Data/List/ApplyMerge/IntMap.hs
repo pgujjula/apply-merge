@@ -53,26 +53,22 @@ generate f = do
 
 step :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) c
 step f = do
-  (value, node) <- deleteMinNode
+  (value, node) <- State.state deleteMinNode
   insertChildA f node
   insertChildB f node
   pure value
 
-deleteMinNode :: (Ord c) => State (Frontier a b c) (c, Node a b c)
-deleteMinNode = do
-  -- Remove minimal node from queue
-  q <- State.gets (.queue)
-  let ((value, node), q') = MinPQueue.deleteFindMin q
-  State.modify $ \frontier' ->
-    frontier' {queue = q'}
-
-  -- Remove minimal node from locationMap
-  let (y, _) = node.position
-  State.modify $ \frontier ->
-    frontier
-      { locationMap = IntMap.delete y frontier.locationMap
-      }
-  pure (value, node)
+deleteMinNode :: (Ord c) => Frontier a b c -> ((c, Node a b c), Frontier a b c)
+deleteMinNode frontier =
+  let q = frontier.queue
+      ((value, node), q') = MinPQueue.deleteFindMin q
+      (y, _) = node.position
+      frontier' =
+        Frontier
+          { locationMap = IntMap.delete y frontier.locationMap,
+            queue = q'
+          }
+   in ((value, node), frontier')
 
 insertChildA ::
   (Ord c) => (a -> b -> c) -> Node a b c -> State (Frontier a b c) ()
