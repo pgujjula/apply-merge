@@ -89,11 +89,7 @@ insertChildA f node frontier = fromMaybe frontier $ do
             as = asDown,
             bs = bsDown
           }
-  pure $
-    Frontier
-      { queue = MinPQueue.insert valueDown nodeDown frontier.queue,
-        locationMap = IntMap.insert (y + 1) x frontier.locationMap
-      }
+  pure $ insertNode valueDown nodeDown frontier
 
 insertChildB ::
   (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
@@ -112,8 +108,12 @@ insertChildB f node frontier = fromMaybe frontier $ do
             as = asRight,
             bs = bsRight
           }
-  pure $
-    Frontier
-      { queue = MinPQueue.insert valueRight nodeRight frontier.queue,
-        locationMap = IntMap.insert y (x + 1) frontier.locationMap
-      }
+  pure $ insertNode valueRight nodeRight frontier
+
+insertNode :: (Ord c) => c -> Node a b c -> Frontier a b c -> Frontier a b c
+insertNode value node frontier =
+  let (y, x) = node.position
+   in Frontier
+        { queue = MinPQueue.insert value node frontier.queue,
+          locationMap = IntMap.insert y x frontier.locationMap
+        }
