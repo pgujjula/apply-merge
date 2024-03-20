@@ -60,11 +60,10 @@ initialFrontier f as bs =
           bs = bs
         }
 
-step :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) c
-step f = do
-  (value, node) <- deleteMinNode
+insertChildA ::
+  (Ord c) => (a -> b -> c) -> Node a b c -> State (Frontier a b c) ()
+insertChildA f node = do
   let (y, x) = node.position
-
   -- Add the node below to the queue and location map
   maybeYDown <- State.gets (fmap fst . IntMap.lookupGT y . (.locationMap))
   let addDown =
@@ -87,7 +86,10 @@ step f = do
           locationMap = IntMap.insert (y + 1) x frontier.locationMap
         }
 
-  -- Add the node to the right to the queue and location map
+insertChildB ::
+  (Ord c) => (a -> b -> c) -> Node a b c -> State (Frontier a b c) ()
+insertChildB f node = do
+  let (y, x) = node.position
   maybeXRight <- State.gets (fmap snd . IntMap.lookupLT y . (.locationMap))
   let addRight =
         maybeXRight /= Just (x + 1)
@@ -108,6 +110,12 @@ step f = do
         { queue = MinPQueue.insert valueRight nodeRight frontier.queue,
           locationMap = IntMap.insert y (x + 1) frontier.locationMap
         }
+
+step :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) c
+step f = do
+  (value, node) <- deleteMinNode
+  insertChildA f node
+  insertChildB f node
   pure value
 
 generate :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) [c]
