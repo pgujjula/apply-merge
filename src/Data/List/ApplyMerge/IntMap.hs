@@ -16,8 +16,8 @@ import Data.PQueue.Prio.Min qualified as MinPQueue
 
 data Node a b c = Node
   { position :: (Int, Int),
-    as :: [a],
-    bs :: [b]
+    _as :: [a],
+    _bs :: [b]
   }
 
 data Frontier a b c = Frontier
@@ -38,12 +38,7 @@ initialFrontier f as bs =
     }
   where
     c = f (head as) (head bs)
-    node =
-      Node
-        { position = (0, 0),
-          as = as,
-          bs = bs
-        }
+    node = Node (0, 0) as bs
 
 generate :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) [c]
 generate f = do
@@ -73,42 +68,26 @@ deleteMinNode frontier =
 
 insertChildA ::
   (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
-insertChildA f node frontier = fromMaybe frontier $ do
-  let (y, x) = node.position
+insertChildA f (Node (y, x) as bs) frontier = fromMaybe frontier $ do
   -- Add the node below to the queue and location map
   let maybeYDown = fmap fst . IntMap.lookupGT y $ frontier.locationMap
-  let addDown = maybeYDown /= Just (y + 1) && (not . null . tail $ node.as)
+  let addDown = maybeYDown /= Just (y + 1) && (not . null . tail $ as)
   guard addDown
-  let asDown = tail node.as
-      bsDown = node.bs
-      valueDown = f (head asDown) (head bsDown)
-      locationDown = (y + 1, x)
-      nodeDown =
-        Node
-          { position = locationDown,
-            as = asDown,
-            bs = bsDown
-          }
-  pure $ insertNode valueDown nodeDown frontier
+  let as' = tail as
+      childA = Node (y + 1, x) as' bs
+      value = f (head as') (head bs)
+  pure $ insertNode value childA frontier
 
 insertChildB ::
   (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
-insertChildB f node frontier = fromMaybe frontier $ do
-  let (y, x) = node.position
+insertChildB f (Node (y, x) as bs) frontier = fromMaybe frontier $ do
   let maybeXRight = fmap snd . IntMap.lookupLT y $ frontier.locationMap
-  let addRight = maybeXRight /= Just (x + 1) && (not . null . tail $ node.bs)
+  let addRight = maybeXRight /= Just (x + 1) && (not . null . tail $ bs)
   guard addRight
-  let asRight = node.as
-      bsRight = tail node.bs
-      valueRight = f (head asRight) (head bsRight)
-      locationRight = (y, x + 1)
-      nodeRight =
-        Node
-          { position = locationRight,
-            as = asRight,
-            bs = bsRight
-          }
-  pure $ insertNode valueRight nodeRight frontier
+  let bs' = tail bs
+      childB = Node (y, x + 1) as bs'
+      value = f (head as) (head bs')
+  pure $ insertNode value childB frontier
 
 insertNode :: (Ord c) => c -> Node a b c -> Frontier a b c -> Frontier a b c
 insertNode value node frontier =
