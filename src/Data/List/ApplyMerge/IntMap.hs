@@ -5,7 +5,7 @@
 
 module Data.List.ApplyMerge.IntMap (applyMerge) where
 
-import Control.Monad (guard, when)
+import Control.Monad (guard)
 import Control.Monad.State (State)
 import Control.Monad.State qualified as State
 import Data.IntMap.Strict (IntMap)
@@ -56,7 +56,7 @@ step :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) c
 step f = do
   (value, node) <- State.state deleteMinNode
   State.modify' $ insertChildA f node
-  insertChildB f node
+  State.modify' $ insertChildB f node
   pure value
 
 deleteMinNode :: (Ord c) => Frontier a b c -> ((c, Node a b c), Frontier a b c)
@@ -96,26 +96,24 @@ insertChildA f node frontier = fromMaybe frontier $ do
       }
 
 insertChildB ::
-  (Ord c) => (a -> b -> c) -> Node a b c -> State (Frontier a b c) ()
-insertChildB f node = do
+  (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
+insertChildB f node frontier = fromMaybe frontier $ do
   let (y, x) = node.position
-  maybeXRight <- State.gets (fmap snd . IntMap.lookupLT y . (.locationMap))
-  let addRight =
-        maybeXRight /= Just (x + 1)
-          && (not . null . tail $ node.bs)
-  when addRight $ do
-    let asRight = node.as
-        bsRight = tail node.bs
-        valueRight = f (head asRight) (head bsRight)
-        locationRight = (y, x + 1)
-        nodeRight =
-          Node
-            { position = locationRight,
-              as = asRight,
-              bs = bsRight
-            }
-    State.modify $ \frontier ->
-      frontier
-        { queue = MinPQueue.insert valueRight nodeRight frontier.queue,
-          locationMap = IntMap.insert y (x + 1) frontier.locationMap
-        }
+  let maybeXRight = fmap snd . IntMap.lookupLT y $ frontier.locationMap
+  let addRight = maybeXRight /= Just (x + 1) && (not . null . tail $ node.bs)
+  guard addRight
+  let asRight = node.as
+      bsRight = tail node.bs
+      valueRight = f (head asRight) (head bsRight)
+      locationRight = (y, x + 1)
+      nodeRight =
+        Node
+          { position = locationRight,
+            as = asRight,
+            bs = bsRight
+          }
+  pure $
+    Frontier
+      { queue = MinPQueue.insert valueRight nodeRight frontier.queue,
+        locationMap = IntMap.insert y (x + 1) frontier.locationMap
+      }
