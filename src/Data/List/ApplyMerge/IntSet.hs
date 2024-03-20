@@ -36,20 +36,11 @@ data Frontier a b c = Frontier
     indexSetB :: IntSet
   }
 
-applyMerge :: forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
+applyMerge :: (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
 applyMerge f as bs = fromMaybe [] $ do
   as' <- nonEmpty as
   bs' <- nonEmpty bs
   pure (unfoldr (step f) (initialFrontier f as' bs'))
-
-step :: (Ord c) => (a -> b -> c) -> Frontier a b c -> Maybe (c, Frontier a b c)
-step f frontier = do
-  (node, frontier') <- deleteMinNode frontier
-  let frontier'' =
-        frontier'
-          & insertChildA f node
-          & insertChildB f node
-  pure (node.value, frontier'')
 
 initialFrontier :: (a -> b -> c) -> NonEmpty a -> NonEmpty b -> Frontier a b c
 initialFrontier f as bs =
@@ -59,6 +50,15 @@ initialFrontier f as bs =
           indexSetA = IntSet.singleton 0,
           indexSetB = IntSet.singleton 0
         }
+
+step :: (Ord c) => (a -> b -> c) -> Frontier a b c -> Maybe (c, Frontier a b c)
+step f frontier = do
+  (node, frontier') <- deleteMinNode frontier
+  let frontier'' =
+        frontier'
+          & insertChildA f node
+          & insertChildB f node
+  pure (node.value, frontier'')
 
 deleteMinNode :: (Ord c) => Frontier a b c -> Maybe (Node a b c, Frontier a b c)
 deleteMinNode frontier = do

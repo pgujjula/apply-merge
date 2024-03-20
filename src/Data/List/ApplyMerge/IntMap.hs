@@ -29,6 +29,35 @@ applyMerge _ [] _ = []
 applyMerge _ _ [] = []
 applyMerge f as bs = State.evalState (generate f) (initialFrontier f as bs)
 
+initialFrontier :: (a -> b -> c) -> [a] -> [b] -> Frontier a b c
+initialFrontier f as bs =
+  Frontier
+    { queue = MinPQueue.singleton c node,
+      locationMap = IntMap.singleton 0 0
+    }
+  where
+    c = f (head as) (head bs)
+    node =
+      Node
+        { position = (0, 0),
+          as = as,
+          bs = bs
+        }
+
+generate :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) [c]
+generate f = do
+  q <- State.gets (.queue)
+  if MinPQueue.null q
+    then pure []
+    else (:) <$> step f <*> generate f
+
+step :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) c
+step f = do
+  (value, node) <- deleteMinNode
+  insertChildA f node
+  insertChildB f node
+  pure value
+
 deleteMinNode :: (Ord c) => State (Frontier a b c) (c, Node a b c)
 deleteMinNode = do
   -- Remove minimal node from queue
@@ -44,21 +73,6 @@ deleteMinNode = do
       { locationMap = IntMap.delete y frontier.locationMap
       }
   pure (value, node)
-
-initialFrontier :: (a -> b -> c) -> [a] -> [b] -> Frontier a b c
-initialFrontier f as bs =
-  Frontier
-    { queue = MinPQueue.singleton c node,
-      locationMap = IntMap.singleton 0 0
-    }
-  where
-    c = f (head as) (head bs)
-    node =
-      Node
-        { position = (0, 0),
-          as = as,
-          bs = bs
-        }
 
 insertChildA ::
   (Ord c) => (a -> b -> c) -> Node a b c -> State (Frontier a b c) ()
@@ -110,17 +124,3 @@ insertChildB f node = do
         { queue = MinPQueue.insert valueRight nodeRight frontier.queue,
           locationMap = IntMap.insert y (x + 1) frontier.locationMap
         }
-
-step :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) c
-step f = do
-  (value, node) <- deleteMinNode
-  insertChildA f node
-  insertChildB f node
-  pure value
-
-generate :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) [c]
-generate f = do
-  q <- State.gets (.queue)
-  if MinPQueue.null q
-    then pure []
-    else (:) <$> step f <*> generate f
