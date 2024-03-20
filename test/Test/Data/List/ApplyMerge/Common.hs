@@ -3,10 +3,10 @@
 {-# LANGUAGE Rank2Types #-}
 
 module Test.Data.List.ApplyMerge.Common
-  ( applyMergeBasicTest,
-    applyMergeSkewedTest,
-    applyMergeBlockTest,
-    applyMergeMaxTest,
+  ( basicTest,
+    skewedTest,
+    blockTest,
+    maxTest,
   )
 where
 
@@ -14,11 +14,11 @@ import Data.List (sort)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 
-applyMergeBasicTest ::
+basicTest ::
   (forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]) -> TestTree
-applyMergeBasicTest applyMerge =
+basicTest applyMerge =
   testGroup
-    "applyMerge basic tests"
+    "basic tests"
     [ testCase "applyMerge (+) [] [] == []" $
         applyMerge (undefined :: Int -> Int -> Int) [] [] @?= [],
       testCase "applyMerge (+) [0 ..] [] == []" $
@@ -57,11 +57,11 @@ applyMergeBasicTest applyMerge =
          in take 100 (applyMerge (+) xs xs) @?= expected
     ]
 
-applyMergeSkewedTest ::
+skewedTest ::
   (forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]) -> TestTree
-applyMergeSkewedTest applyMerge =
+skewedTest applyMerge =
   testGroup
-    "applyMerge skewed tests"
+    "skewed tests"
     [ testCase "applyMerge (^) [2..] [1..] is correct in the first 100 elems" $
         let bases :: [Integer]
             bases = [2 ..]
@@ -80,11 +80,11 @@ applyMergeSkewedTest applyMerge =
          in take 100 (applyMerge (flip (^)) exps bases) @?= expected
     ]
 
-applyMergeBlockTest ::
+blockTest ::
   (forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]) -> TestTree
-applyMergeBlockTest applyMerge =
+blockTest applyMerge =
   testGroup
-    "applyMerge block tests"
+    "block tests"
     [ testCase
         ( "applyMerge (\\x y -> (x `quot` 3) + (y `quot` 3)) [0..] [0..] is correct in the "
             ++ "first 100 elems"
@@ -98,11 +98,11 @@ applyMergeBlockTest applyMerge =
            in take 100 (applyMerge f xs xs) @?= expected
     ]
 
-applyMergeMaxTest ::
+maxTest ::
   (forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]) -> TestTree
-applyMergeMaxTest applyMerge =
+maxTest applyMerge =
   testGroup
-    "applyMerge max tests"
+    "max tests"
     [ testCase "applyMerge max [0..] [0..] is correct in the first 100 elems" $
         let xs :: [Int]
             xs = [0 ..]

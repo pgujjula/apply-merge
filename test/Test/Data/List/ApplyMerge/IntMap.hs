@@ -8,10 +8,10 @@ where
 
 import Data.List.ApplyMerge.IntMap (applyMerge)
 import Test.Data.List.ApplyMerge.Common
-  ( applyMergeBasicTest,
-    applyMergeBlockTest,
-    applyMergeMaxTest,
-    applyMergeSkewedTest,
+  ( basicTest,
+    blockTest,
+    maxTest,
+    skewedTest,
   )
 import Test.Tasty (TestTree, testGroup)
 
@@ -19,8 +19,8 @@ tests :: TestTree
 tests =
   testGroup
     "Data.List.ApplyMerge.IntMap"
-    [ applyMergeBasicTest applyMerge,
-      applyMergeSkewedTest applyMerge,
-      applyMergeBlockTest applyMerge,
-      applyMergeMaxTest applyMerge
+    [ basicTest applyMerge,
+      skewedTest applyMerge,
+      blockTest applyMerge,
+      maxTest applyMerge
     ]
