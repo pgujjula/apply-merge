@@ -31,8 +31,8 @@ instance (Ord c) => Ord (Node a b c) where
 
 data Frontier a b c = Frontier
   { queue :: MinQueue (Node a b c),
-    xSet :: IntSet,
-    ySet :: IntSet
+    indexSetA :: IntSet,
+    indexSetB :: IntSet
   }
 
 applyMerge :: forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
@@ -52,8 +52,8 @@ initialFrontier f as bs =
   let initialNode = mkNode f (0, 0) as bs
    in Frontier
         { queue = MinQueue.singleton initialNode,
-          xSet = IntSet.singleton 0,
-          ySet = IntSet.singleton 0
+          indexSetA = IntSet.singleton 0,
+          indexSetB = IntSet.singleton 0
         }
 
 deleteMinNode :: (Ord c) => Frontier a b c -> Maybe (Node a b c, Frontier a b c)
@@ -63,21 +63,22 @@ deleteMinNode frontier = do
       frontier' =
         Frontier
           { queue = queue',
-            xSet = IntSet.delete x frontier.xSet,
-            ySet = IntSet.delete y frontier.ySet
+            indexSetA = IntSet.delete x frontier.indexSetA,
+            indexSetB = IntSet.delete y frontier.indexSetB
           }
   pure (node, frontier')
 
 insertNode :: (Ord c) => Node a b c -> Frontier a b c -> Frontier a b c
 insertNode node frontier =
   let (x, y) = node.pos
-   in if IntSet.member x frontier.xSet || IntSet.member y frontier.ySet
+   in if IntSet.member x frontier.indexSetA
+        || IntSet.member y frontier.indexSetB
         then frontier
         else
           Frontier
             { queue = MinQueue.insert node frontier.queue,
-              xSet = IntSet.insert x frontier.xSet,
-              ySet = IntSet.insert y frontier.ySet
+              indexSetA = IntSet.insert x frontier.indexSetA,
+              indexSetB = IntSet.insert y frontier.indexSetB
             }
 
 childrenNodes :: forall a b c. (a -> b -> c) -> Node a b c -> [Node a b c]
