@@ -33,7 +33,6 @@ library:
   dependencies:
   - containers
   - mtl
-  - optics
   - pqueue
 
 tests:
