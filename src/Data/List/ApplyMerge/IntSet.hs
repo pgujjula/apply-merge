@@ -59,45 +59,45 @@ initialFrontier f as bs =
 deleteMinNode :: (Ord c) => Frontier a b c -> Maybe (Node a b c, Frontier a b c)
 deleteMinNode frontier = do
   (node, queue') <- MinQueue.minView frontier.queue
-  let (x, y) = node.pos
+  let (ia, ib) = node.pos
       frontier' =
         Frontier
           { queue = queue',
-            indexSetA = IntSet.delete x frontier.indexSetA,
-            indexSetB = IntSet.delete y frontier.indexSetB
+            indexSetA = IntSet.delete ia frontier.indexSetA,
+            indexSetB = IntSet.delete ib frontier.indexSetB
           }
   pure (node, frontier')
 
 insertNode :: (Ord c) => Node a b c -> Frontier a b c -> Frontier a b c
 insertNode node frontier =
-  let (x, y) = node.pos
-   in if IntSet.member x frontier.indexSetA
-        || IntSet.member y frontier.indexSetB
+  let (ia, ib) = node.pos
+   in if IntSet.member ia frontier.indexSetA
+        || IntSet.member ib frontier.indexSetB
         then frontier
         else
           Frontier
             { queue = MinQueue.insert node frontier.queue,
-              indexSetA = IntSet.insert x frontier.indexSetA,
-              indexSetB = IntSet.insert y frontier.indexSetB
+              indexSetA = IntSet.insert ia frontier.indexSetA,
+              indexSetB = IntSet.insert ib frontier.indexSetB
             }
 
 childrenNodes :: forall a b c. (a -> b -> c) -> Node a b c -> [Node a b c]
-childrenNodes f (Node (x, y) _ as bs) = catMaybes [nodeXPlus1, nodeYPlus1]
+childrenNodes f (Node (ia, ib) _ as bs) = catMaybes [childA, childB]
   where
-    nodeXPlus1 :: Maybe (Node a b c)
-    nodeXPlus1 = do
+    childA :: Maybe (Node a b c)
+    childA = do
       as' <- nonEmpty (NonEmpty.tail as)
-      pure (mkNode f (x + 1, y) as' bs)
+      pure (mkNode f (ia + 1, ib) as' bs)
 
-    nodeYPlus1 :: Maybe (Node a b c)
-    nodeYPlus1 = do
+    childB :: Maybe (Node a b c)
+    childB = do
       bs' <- nonEmpty (NonEmpty.tail bs)
-      pure (mkNode f (x, y + 1) as bs')
+      pure (mkNode f (ia, ib + 1) as bs')
 
 mkNode :: (a -> b -> c) -> (Int, Int) -> NonEmpty a -> NonEmpty b -> Node a b c
-mkNode f (x, y) as bs =
+mkNode f (ia, ib) as bs =
   Node
-    { pos = (x, y),
+    { pos = (ia, ib),
       val = f (NonEmpty.head as) (NonEmpty.head bs),
       as = as,
       bs = bs
