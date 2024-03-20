@@ -26,6 +26,22 @@ applyMerge _ [] _ = []
 applyMerge _ _ [] = []
 applyMerge f as bs = State.evalState (generate f) (initialFrontier f as bs)
 
+deleteMinNode :: (Ord c) => State (Frontier a b c) (c, Node a b c)
+deleteMinNode = do
+  -- Remove minimal node from queue
+  q <- State.gets _queue
+  let ((value, node), q') = MinPQueue.deleteFindMin q
+  State.modify $ \frontier' ->
+    frontier' {_queue = q'}
+
+  -- Remove minimal node from locationMap
+  let (y, _) = _location node
+  State.modify $ \frontier ->
+    frontier
+      { _locationMap = IntMap.delete y (_locationMap frontier)
+      }
+  pure (value, node)
+
 initialFrontier :: (a -> b -> c) -> [a] -> [b] -> Frontier a b c
 initialFrontier f as bs =
   Frontier
@@ -43,18 +59,8 @@ initialFrontier f as bs =
 
 step :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) c
 step f = do
-  -- Remove minimal node from queue
-  q <- State.gets _queue
-  let ((value, node), q') = MinPQueue.deleteFindMin q
-  State.modify $ \frontier ->
-    frontier {_queue = q'}
-
-  -- Remove minimal node from locationMap
+  (value, node) <- deleteMinNode
   let (y, x) = _location node
-  State.modify $ \frontier ->
-    frontier
-      { _locationMap = IntMap.delete y (_locationMap frontier)
-      }
 
   -- Add the node below to the queue and location map
   maybeYDown <- State.gets (fmap fst . IntMap.lookupGT y . _locationMap)
