@@ -5,11 +5,12 @@
 
 module Data.List.ApplyMerge.IntMap (applyMerge) where
 
-import Control.Monad (when)
+import Control.Monad (guard, when)
 import Control.Monad.State (State)
 import Control.Monad.State qualified as State
 import Data.IntMap.Strict (IntMap)
 import Data.IntMap.Strict qualified as IntMap
+import Data.Maybe (fromMaybe)
 import Data.PQueue.Prio.Min (MinPQueue)
 import Data.PQueue.Prio.Min qualified as MinPQueue
 
@@ -54,7 +55,7 @@ generate f = do
 step :: (Ord c) => (a -> b -> c) -> State (Frontier a b c) c
 step f = do
   (value, node) <- State.state deleteMinNode
-  insertChildA f node
+  State.modify' $ insertChildA f node
   insertChildB f node
   pure value
 
@@ -71,30 +72,28 @@ deleteMinNode frontier =
    in ((value, node), frontier')
 
 insertChildA ::
-  (Ord c) => (a -> b -> c) -> Node a b c -> State (Frontier a b c) ()
-insertChildA f node = do
+  (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
+insertChildA f node frontier = fromMaybe frontier $ do
   let (y, x) = node.position
   -- Add the node below to the queue and location map
-  maybeYDown <- State.gets (fmap fst . IntMap.lookupGT y . (.locationMap))
-  let addDown =
-        maybeYDown /= Just (y + 1)
-          && (not . null . tail $ node.as)
-  when addDown $ do
-    let asDown = tail node.as
-        bsDown = node.bs
-        valueDown = f (head asDown) (head bsDown)
-        locationDown = (y + 1, x)
-        nodeDown =
-          Node
-            { position = locationDown,
-              as = asDown,
-              bs = bsDown
-            }
-    State.modify $ \frontier ->
-      frontier
-        { queue = MinPQueue.insert valueDown nodeDown frontier.queue,
-          locationMap = IntMap.insert (y + 1) x frontier.locationMap
-        }
+  let maybeYDown = fmap fst . IntMap.lookupGT y $ frontier.locationMap
+  let addDown = maybeYDown /= Just (y + 1) && (not . null . tail $ node.as)
+  guard addDown
+  let asDown = tail node.as
+      bsDown = node.bs
+      valueDown = f (head asDown) (head bsDown)
+      locationDown = (y + 1, x)
+      nodeDown =
+        Node
+          { position = locationDown,
+            as = asDown,
+            bs = bsDown
+          }
+  pure $
+    Frontier
+      { queue = MinPQueue.insert valueDown nodeDown frontier.queue,
+        locationMap = IntMap.insert (y + 1) x frontier.locationMap
+      }
 
 insertChildB ::
   (Ord c) => (a -> b -> c) -> Node a b c -> State (Frontier a b c) ()
