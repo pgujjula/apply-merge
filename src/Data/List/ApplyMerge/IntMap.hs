@@ -25,7 +25,7 @@ data Node a b c = Node
 
 data Frontier a b c = Frontier
   { queue :: MinPQueue c (Node a b c),
-    locationMap :: IntMap Int
+    indexMap :: IntMap Int
   }
 
 applyMerge :: (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
@@ -39,11 +39,10 @@ initialFrontier f as bs =
   let node = mkNode f (0, 0) as bs
    in Frontier
         { queue = MinPQueue.singleton node.value node,
-          locationMap = IntMap.singleton 0 0
+          indexMap = IntMap.singleton 0 0
         }
 
-step ::
-  (Ord c) => (a -> b -> c) -> Frontier a b c -> Maybe (c, Frontier a b c)
+step :: (Ord c) => (a -> b -> c) -> Frontier a b c -> Maybe (c, Frontier a b c)
 step f frontier = do
   (node, frontier') <- deleteMinNode frontier
   let frontier'' =
@@ -54,40 +53,39 @@ step f frontier = do
 
 deleteMinNode :: (Ord c) => Frontier a b c -> Maybe (Node a b c, Frontier a b c)
 deleteMinNode frontier = do
-  (node, q') <- MinPQueue.minView frontier.queue
-  let (y, _) = node.position
+  (node, queue') <- MinPQueue.minView frontier.queue
+  let (ia, _) = node.position
       frontier' =
         Frontier
-          { locationMap = IntMap.delete y frontier.locationMap,
-            queue = q'
+          { queue = queue',
+            indexMap = IntMap.delete ia frontier.indexMap
           }
   pure (node, frontier')
 
 insertChildA ::
   (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
-insertChildA f (Node (y, x) _ as bs) frontier = fromMaybe frontier $ do
-  -- Add the node below to the queue and location map
-  let maybeYDown = fmap fst . IntMap.lookupGT y $ frontier.locationMap
-  guard $ maybeYDown /= Just (y + 1)
+insertChildA f (Node (ia, ib) _ as bs) frontier = fromMaybe frontier $ do
+  let iaNext = fmap fst . IntMap.lookupGT ia $ frontier.indexMap
+  guard $ iaNext /= Just (ia + 1)
   as' <- nonEmpty (NonEmpty.tail as)
-  let childA = mkNode f (y + 1, x) as' bs
+  let childA = mkNode f (ia + 1, ib) as' bs
   pure $ insertNode childA frontier
 
 insertChildB ::
   (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
-insertChildB f (Node (y, x) _ as bs) frontier = fromMaybe frontier $ do
-  let maybeXRight = fmap snd . IntMap.lookupLT y $ frontier.locationMap
-  guard $ maybeXRight /= Just (x + 1)
+insertChildB f (Node (ia, ib) _ as bs) frontier = fromMaybe frontier $ do
+  let ibNext = fmap snd . IntMap.lookupLT ia $ frontier.indexMap
+  guard $ ibNext /= Just (ib + 1)
   bs' <- nonEmpty (NonEmpty.tail bs)
-  let childB = mkNode f (y, x + 1) as bs'
+  let childB = mkNode f (ia, ib + 1) as bs'
   pure $ insertNode childB frontier
 
 insertNode :: (Ord c) => Node a b c -> Frontier a b c -> Frontier a b c
 insertNode node frontier =
-  let (y, x) = node.position
+  let (ia, ib) = node.position
    in Frontier
         { queue = MinPQueue.insert node.value node frontier.queue,
-          locationMap = IntMap.insert y x frontier.locationMap
+          indexMap = IntMap.insert ia ib frontier.indexMap
         }
 
 mkNode :: (a -> b -> c) -> (Int, Int) -> NonEmpty a -> NonEmpty b -> Node a b c
