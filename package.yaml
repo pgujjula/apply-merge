@@ -27,6 +27,7 @@ language: GHC2021
 library:
   source-dirs: src
   exposed-modules:
+  - Data.DoublyLinkedList.Mutable
   - Data.List.ApplyMerge
   - Data.List.ApplyMerge.IntMap
   - Data.List.ApplyMerge.IntSet

@@ -24,6 +24,7 @@ source-repository head
 
 library
   exposed-modules:
+      Data.DoublyLinkedList.Mutable
       Data.List.ApplyMerge
       Data.List.ApplyMerge.IntMap
       Data.List.ApplyMerge.IntSet
