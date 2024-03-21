@@ -6,16 +6,15 @@
 module Data.List.ApplyMerge.IntSet (applyMerge) where
 
 import Control.Monad (guard)
-import Data.Function (on, (&))
+import Data.Function ((&))
 import Data.IntSet (IntSet)
 import Data.IntSet qualified as IntSet
 import Data.List (unfoldr)
 import Data.List.NonEmpty (NonEmpty, nonEmpty)
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Maybe (fromMaybe)
-import Data.Ord (comparing)
-import Data.PQueue.Min (MinQueue)
-import Data.PQueue.Min qualified as MinQueue
+import Data.PQueue.Prio.Min (MinPQueue)
+import Data.PQueue.Prio.Min qualified as MinPQueue
 
 data Node a b c = Node
   { position :: (Int, Int),
@@ -24,14 +23,8 @@ data Node a b c = Node
     bs :: NonEmpty b
   }
 
-instance (Eq c) => Eq (Node a b c) where
-  (==) = (==) `on` (\node -> node.value)
-
-instance (Ord c) => Ord (Node a b c) where
-  compare = comparing (\node -> node.value)
-
 data Frontier a b c = Frontier
-  { queue :: MinQueue (Node a b c),
+  { queue :: MinPQueue c (Node a b c),
     indexSetA :: IntSet,
     indexSetB :: IntSet
   }
@@ -46,7 +39,7 @@ initialFrontier :: (a -> b -> c) -> NonEmpty a -> NonEmpty b -> Frontier a b c
 initialFrontier f as bs =
   let node = mkNode f (0, 0) as bs
    in Frontier
-        { queue = MinQueue.singleton node,
+        { queue = MinPQueue.singleton node.value node,
           indexSetA = IntSet.singleton 0,
           indexSetB = IntSet.singleton 0
         }
@@ -62,7 +55,7 @@ step f frontier = do
 
 deleteMinNode :: (Ord c) => Frontier a b c -> Maybe (Node a b c, Frontier a b c)
 deleteMinNode frontier = do
-  (node, queue') <- MinQueue.minView frontier.queue
+  (node, queue') <- MinPQueue.minView frontier.queue
   let (ia, ib) = node.position
       frontier' =
         Frontier
@@ -92,7 +85,7 @@ insertNode :: (Ord c) => Node a b c -> Frontier a b c -> Frontier a b c
 insertNode node frontier =
   let (ia, ib) = node.position
    in Frontier
-        { queue = MinQueue.insert node frontier.queue,
+        { queue = MinPQueue.insert node.value node frontier.queue,
           indexSetA = IntSet.insert ia frontier.indexSetA,
           indexSetB = IntSet.insert ib frontier.indexSetB
         }
