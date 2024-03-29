@@ -53,6 +53,7 @@ tests:
     - tasty
     - tasty-expected-failure
     - tasty-hunit
+    - transformers
 
 benchmarks:
   apply-merge-benchmarks:

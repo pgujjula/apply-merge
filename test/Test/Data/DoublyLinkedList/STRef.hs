@@ -5,12 +5,16 @@ module Test.Data.DoublyLinkedList.STRef (tests) where
 
 import Control.Monad (void)
 import Control.Monad.ST (runST)
+import Control.Monad.Trans.Class (lift)
+import Control.Monad.Trans.Maybe (MaybeT (..), runMaybeT)
 import Data.DoublyLinkedList.STRef
   ( cons,
+    delete,
     empty,
     fromList,
     head,
     last,
+    next,
     null,
     toList,
     value,
@@ -286,7 +290,34 @@ deletionTests :: TestTree
 deletionTests = testGroup "Deletion" [deleteTests]
 
 deleteTests :: TestTree
-deleteTests = ignoreTest $ testCase "delete" unimplemented
+deleteTests =
+  testGroup
+    "delete"
+    [ testCase "Turn [-2, -1, 0, 1, 2] -> [-2, -1, 1, 2] using delete" $ do
+        let xs :: Maybe [Int]
+            xs = runST $ runMaybeT $ do
+              dllist <- lift $ fromList [-2 .. 2]
+              node1 <- MaybeT $ head dllist
+              node2 <- MaybeT $ next node1
+              node3 <- MaybeT $ next node2
+              lift (delete node3)
+              lift (toList dllist)
+         in xs @?= Just [-2, -1, 1, 2],
+      testCase "Turn [1, 2, 3, 4, 5, 6] -> [2, 4, 6] using delete" $
+        let xs :: Maybe [Int]
+            xs = runST $ runMaybeT $ do
+              dlist <- lift $ fromList [1 .. 6]
+              node1 <- MaybeT (head dlist)
+              lift (delete node1)
+              node2 <- MaybeT (next node1)
+              node3 <- MaybeT (next node2)
+              node4 <- MaybeT (next node3)
+              lift (delete node3)
+              node5 <- MaybeT (next node4)
+              lift (delete node5)
+              lift (toList dlist)
+         in xs @?= Just [2, 4, 6]
+    ]
 
 -- List conversion
 listConversionTests :: TestTree
