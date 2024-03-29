@@ -4,11 +4,11 @@
 module Test.Data.DoublyLinkedList.STRef (tests) where
 
 import Control.Monad.ST (runST)
-import Data.DoublyLinkedList.STRef (empty, fromList, head, value)
+import Data.DoublyLinkedList.STRef (empty, fromList, head, last, value)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.ExpectedFailure (ignoreTest)
 import Test.Tasty.HUnit (Assertion, assertFailure, testCase, (@?=))
-import Prelude hiding (head)
+import Prelude hiding (head, last)
 
 tests :: TestTree
 tests =
@@ -88,7 +88,45 @@ headTests =
     ]
 
 lastTests :: TestTree
-lastTests = ignoreTest $ testCase "last" unimplemented
+lastTests =
+  testGroup
+    "last"
+    [ testCase "last of empty list" $ do
+        -- Construct empty list using empty
+        let lastNodeValue1 :: Maybe Int
+            lastNodeValue1 = runST $ do
+              list <- empty
+              lastNode <- last list
+              pure (value <$> lastNode)
+        lastNodeValue1 @?= Nothing
+
+        -- Construct empty list using fromList
+        let lastNodeValue2 :: Maybe Int
+            lastNodeValue2 = runST $ do
+              list <- fromList []
+              lastNode <- last list
+              pure (value <$> lastNode)
+        lastNodeValue2 @?= Nothing,
+      testCase "last of non-empty lists" $ do
+        let lastNodeValue1 :: Maybe Int
+            lastNodeValue1 = runST $ do
+              list <- fromList [1]
+              lastNode <- last list
+              pure (value <$> lastNode)
+        lastNodeValue1 @?= Just 1
+        let lastNodeValue2 :: Maybe Int
+            lastNodeValue2 = runST $ do
+              list <- fromList [1, 2]
+              lastNode <- last list
+              pure (value <$> lastNode)
+        lastNodeValue2 @?= Just 2
+        let lastNodeValue3 :: Maybe Int
+            lastNodeValue3 = runST $ do
+              list <- fromList [1, 2, 3]
+              lastNode <- last list
+              pure (value <$> lastNode)
+        lastNodeValue3 @?= Just 3
+    ]
 
 nextTests :: TestTree
 nextTests = ignoreTest $ testCase "next" unimplemented
