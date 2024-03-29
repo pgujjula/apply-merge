@@ -3,9 +3,12 @@
 
 module Test.Data.DoublyLinkedList.STRef (tests) where
 
+import Control.Monad.ST (runST)
+import Data.DoublyLinkedList.STRef (empty, fromList, head, value)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.ExpectedFailure (ignoreTest)
-import Test.Tasty.HUnit (Assertion, assertFailure, testCase)
+import Test.Tasty.HUnit (Assertion, assertFailure, testCase, (@?=))
+import Prelude hiding (head)
 
 tests :: TestTree
 tests =
@@ -44,7 +47,45 @@ traversalTests =
   testGroup "Traversal" [headTests, lastTests, nextTests, prevTests]
 
 headTests :: TestTree
-headTests = ignoreTest $ testCase "head" unimplemented
+headTests =
+  testGroup
+    "head"
+    [ testCase "head of empty list" $ do
+        -- Construct empty list using empty
+        let firstNodeValue1 :: Maybe Int
+            firstNodeValue1 = runST $ do
+              list <- empty
+              firstNode <- head list
+              pure (value <$> firstNode)
+        firstNodeValue1 @?= Nothing
+
+        -- Construct empty list using fromList
+        let firstNodeValue2 :: Maybe Int
+            firstNodeValue2 = runST $ do
+              list <- fromList []
+              firstNode <- head list
+              pure (value <$> firstNode)
+        firstNodeValue2 @?= Nothing,
+      testCase "head of non-empty lists" $ do
+        let firstNodeValue1 :: Maybe Int
+            firstNodeValue1 = runST $ do
+              list <- fromList [1]
+              firstNode <- head list
+              pure (value <$> firstNode)
+        firstNodeValue1 @?= Just 1
+        let firstNodeValue2 :: Maybe Int
+            firstNodeValue2 = runST $ do
+              list <- fromList [2, 1]
+              firstNode <- head list
+              pure (value <$> firstNode)
+        firstNodeValue2 @?= Just 2
+        let firstNodeValue3 :: Maybe Int
+            firstNodeValue3 = runST $ do
+              list <- fromList [3, 2, 1]
+              firstNode <- head list
+              pure (value <$> firstNode)
+        firstNodeValue3 @?= Just 3
+    ]
 
 lastTests :: TestTree
 lastTests = ignoreTest $ testCase "last" unimplemented
