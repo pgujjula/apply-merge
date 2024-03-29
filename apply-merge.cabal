@@ -70,6 +70,7 @@ benchmark apply-merge-benchmarks
   main-is: Main.hs
   other-modules:
       Bench.Data.DoublyLinkedList.STRef
+      Bench.PriorityQueue.MinPQueue
   hs-source-dirs:
       bench
   ghc-options: -Wall
@@ -77,6 +78,7 @@ benchmark apply-merge-benchmarks
       apply-merge
     , base >=4.16 && <5
     , containers
+    , pqueue
     , tasty-bench
     , transformers
   default-language: GHC2021
