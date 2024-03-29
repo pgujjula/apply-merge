@@ -76,5 +76,7 @@ benchmark apply-merge-benchmarks
   build-depends:
       apply-merge
     , base >=4.16 && <5
+    , containers
     , tasty-bench
+    , transformers
   default-language: GHC2021

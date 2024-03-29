@@ -63,4 +63,6 @@ benchmarks:
     - Bench.Data.DoublyLinkedList.STRef
     dependencies:
     - apply-merge
+    - containers
     - tasty-bench
+    - transformers
