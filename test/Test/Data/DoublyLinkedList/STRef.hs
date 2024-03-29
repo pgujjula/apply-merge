@@ -4,11 +4,11 @@
 module Test.Data.DoublyLinkedList.STRef (tests) where
 
 import Control.Monad.ST (runST)
-import Data.DoublyLinkedList.STRef (empty, fromList, head, last, value)
+import Data.DoublyLinkedList.STRef (empty, fromList, head, last, null, value)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.ExpectedFailure (ignoreTest)
-import Test.Tasty.HUnit (Assertion, assertFailure, testCase, (@?=))
-import Prelude hiding (head, last)
+import Test.Tasty.HUnit (Assertion, assertBool, assertFailure, testCase, (@?=))
+import Prelude hiding (head, last, null)
 
 tests :: TestTree
 tests =
@@ -139,7 +139,30 @@ queryTests :: TestTree
 queryTests = testGroup "Query" [nullTests, valueTests]
 
 nullTests :: TestTree
-nullTests = ignoreTest $ testCase "null" unimplemented
+nullTests =
+  testGroup
+    "null"
+    [ testCase "null of empty list" $ do
+        -- Construct empty list using empty
+        let isNull1 :: Bool
+            isNull1 = runST (empty >>= null)
+        assertBool "empty list is null" isNull1
+
+        -- Construct empty list using fromList
+        let isNull2 :: Bool
+            isNull2 = runST (fromList [] >>= null)
+        assertBool "empty list is null" isNull2,
+      testCase "null of non-empty list" $ do
+        let isNull1 :: Bool
+            isNull1 = runST (fromList [1 :: Int] >>= null)
+        assertBool "non-empty list is not null" (not isNull1)
+        let isNull2 :: Bool
+            isNull2 = runST (fromList [1 :: Int, 2] >>= null)
+        assertBool "non-empty list is not null" (not isNull2)
+        let isNull3 :: Bool
+            isNull3 = runST (fromList [1 :: Int, 2, 3] >>= null)
+        assertBool "non-empty list is not null" (not isNull3)
+    ]
 
 valueTests :: TestTree
 valueTests = testCase "value" (pure ())
