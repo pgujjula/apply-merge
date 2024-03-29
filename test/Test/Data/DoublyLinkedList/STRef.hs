@@ -191,20 +191,64 @@ insertionTests =
     [ consTests,
       snocTests,
       insertBeforeTests,
-      insertAfterTests
+      insertAfterTests,
+      insertBeforeAfterTests
     ]
 
 consTests :: TestTree
-consTests = ignoreTest $ testCase "cons" unimplemented
+consTests =
+  testGroup
+    "cons"
+    [ ignoreTest $ testCase "Create [1] with cons" unimplemented,
+      ignoreTest $ testCase "Create [1, 2] with cons" unimplemented,
+      ignoreTest $ testCase "Create [1, 2, 3] with cons" unimplemented
+    ]
 
 snocTests :: TestTree
-snocTests = ignoreTest $ testCase "snoc" unimplemented
+snocTests =
+  testGroup
+    "snoc"
+    [ ignoreTest $ testCase "Create [1] with snoc" unimplemented,
+      ignoreTest $ testCase "Create [1, 2] with snoc" unimplemented,
+      ignoreTest $ testCase "Create [1, 2, 3] with snoc" unimplemented
+    ]
 
 insertBeforeTests :: TestTree
-insertBeforeTests = ignoreTest $ testCase "insertBefore" unimplemented
+insertBeforeTests =
+  testGroup
+    "insertBefore"
+    [ ignoreTest $ testCase "Create [1, 0] with insertBefore" unimplemented,
+      ignoreTest $ testCase "Create [1, 2, 0] with insertBefore" unimplemented,
+      ignoreTest $
+        testCase "Create [1, 2, 3, 0] with insertBefore" unimplemented
+    ]
 
 insertAfterTests :: TestTree
-insertAfterTests = ignoreTest $ testCase "insertAfter" unimplemented
+insertAfterTests =
+  testGroup
+    "insertAfter"
+    [ ignoreTest $ testCase "Create [0, 1] with insertAfter" unimplemented,
+      ignoreTest $ testCase "Create [0, 1, 2] with insertAfter" unimplemented,
+      ignoreTest $ testCase "Create [0, 1, 2, 3] with insertAfter" unimplemented
+    ]
+
+insertBeforeAfterTests :: TestTree
+insertBeforeAfterTests =
+  testGroup
+    "insertBefore and insertAfter"
+    [ ignoreTest $
+        testCase
+          "Create [-1, 0, 1] with insertBefore and insertAfter"
+          unimplemented,
+      ignoreTest $
+        testCase
+          "Create [-2, -1, 0, 1, 2] with insertBefore and insertAfter"
+          unimplemented,
+      ignoreTest $
+        testCase
+          "Create [-3, -2, -1, 0, 1, 2, 3] with insertBefore and insertAfter"
+          unimplemented
+    ]
 
 -- Deletion
 deletionTests :: TestTree
