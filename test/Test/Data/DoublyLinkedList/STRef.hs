@@ -129,10 +129,26 @@ lastTests =
     ]
 
 nextTests :: TestTree
-nextTests = ignoreTest $ testCase "next" unimplemented
+nextTests =
+  ignoreTest $
+    testGroup
+      "next"
+      [ testCase "next on empty list" unimplemented,
+        testCase "next on [1]" unimplemented,
+        testCase "next on [3, 2, 1]" unimplemented,
+        testCase "next on [1, 1, 1, 1, 1]" unimplemented
+      ]
 
 prevTests :: TestTree
-prevTests = ignoreTest $ testCase "prev" unimplemented
+prevTests =
+  ignoreTest $
+    testGroup
+      "prev"
+      [ testCase "prev on empty list" unimplemented,
+        testCase "prev on [1]" unimplemented,
+        testCase "prev on [3, 2, 1]" unimplemented,
+        testCase "prev on [1, 1, 1, 1, 1]" unimplemented
+      ]
 
 -- Query
 queryTests :: TestTree
