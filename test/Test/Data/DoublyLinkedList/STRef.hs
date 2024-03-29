@@ -9,17 +9,16 @@ import Test.Tasty.HUnit (Assertion, assertFailure, testCase)
 
 tests :: TestTree
 tests =
-  ignoreTest $
-    testGroup
-      "Data.DoublyLinkedList.STRef"
-      [ constructionTests,
-        traversalTests,
-        queryTests,
-        insertionTests,
-        deletionTests,
-        listConversionTests,
-        integrationTests
-      ]
+  testGroup
+    "Data.DoublyLinkedList.STRef"
+    [ constructionTests,
+      traversalTests,
+      queryTests,
+      insertionTests,
+      deletionTests,
+      listConversionTests,
+      integrationTests
+    ]
 
 unimplemented :: Assertion
 unimplemented = assertFailure "unimplemented"
@@ -34,10 +33,10 @@ constructionTests =
     ]
 
 emptyTests :: TestTree
-emptyTests = testCase "empty" unimplemented
+emptyTests = ignoreTest $ testCase "empty" unimplemented
 
 fromListTests :: TestTree
-fromListTests = testCase "fromList" unimplemented
+fromListTests = ignoreTest $ testCase "fromList" unimplemented
 
 -- Traversal
 traversalTests :: TestTree
@@ -45,26 +44,26 @@ traversalTests =
   testGroup "Traversal" [headTests, lastTests, nextTests, prevTests]
 
 headTests :: TestTree
-headTests = testCase "head" unimplemented
+headTests = ignoreTest $ testCase "head" unimplemented
 
 lastTests :: TestTree
-lastTests = testCase "last" unimplemented
+lastTests = ignoreTest $ testCase "last" unimplemented
 
 nextTests :: TestTree
-nextTests = testCase "next" unimplemented
+nextTests = ignoreTest $ testCase "next" unimplemented
 
 prevTests :: TestTree
-prevTests = testCase "prev" unimplemented
+prevTests = ignoreTest $ testCase "prev" unimplemented
 
 -- Query
 queryTests :: TestTree
 queryTests = testGroup "Query" [nullTests, valueTests]
 
 nullTests :: TestTree
-nullTests = testCase "null" unimplemented
+nullTests = ignoreTest $ testCase "null" unimplemented
 
 valueTests :: TestTree
-valueTests = testCase "value" unimplemented
+valueTests = ignoreTest $ testCase "value" unimplemented
 
 -- Insertion
 insertionTests :: TestTree
@@ -78,31 +77,31 @@ insertionTests =
     ]
 
 consTests :: TestTree
-consTests = testCase "cons" unimplemented
+consTests = ignoreTest $ testCase "cons" unimplemented
 
 snocTests :: TestTree
-snocTests = testCase "snoc" unimplemented
+snocTests = ignoreTest $ testCase "snoc" unimplemented
 
 insertBeforeTests :: TestTree
-insertBeforeTests = testCase "insertBefore" unimplemented
+insertBeforeTests = ignoreTest $ testCase "insertBefore" unimplemented
 
 insertAfterTests :: TestTree
-insertAfterTests = testCase "insertAfter" unimplemented
+insertAfterTests = ignoreTest $ testCase "insertAfter" unimplemented
 
 -- Deletion
 deletionTests :: TestTree
 deletionTests = testGroup "Deletion" [deleteTests]
 
 deleteTests :: TestTree
-deleteTests = testCase "delete" unimplemented
+deleteTests = ignoreTest $ testCase "delete" unimplemented
 
 -- List conversion
 listConversionTests :: TestTree
 listConversionTests = testGroup "List conversion" [toListTests]
 
 toListTests :: TestTree
-toListTests = testCase "toList" unimplemented
+toListTests = ignoreTest $ testCase "toList" unimplemented
 
 -- Integration
 integrationTests :: TestTree
-integrationTests = testCase "Integration" unimplemented
+integrationTests = ignoreTest $ testCase "Integration" unimplemented
