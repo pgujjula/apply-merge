@@ -3,8 +3,18 @@
 
 module Test.Data.DoublyLinkedList.STRef (tests) where
 
+import Control.Monad (void)
 import Control.Monad.ST (runST)
-import Data.DoublyLinkedList.STRef (empty, fromList, head, last, null, value)
+import Data.DoublyLinkedList.STRef
+  ( cons,
+    empty,
+    fromList,
+    head,
+    last,
+    null,
+    toList,
+    value,
+  )
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.ExpectedFailure (ignoreTest)
 import Test.Tasty.HUnit (Assertion, assertBool, assertFailure, testCase, (@?=))
@@ -199,9 +209,30 @@ consTests :: TestTree
 consTests =
   testGroup
     "cons"
-    [ ignoreTest $ testCase "Create [1] with cons" unimplemented,
-      ignoreTest $ testCase "Create [1, 2] with cons" unimplemented,
-      ignoreTest $ testCase "Create [1, 2, 3] with cons" unimplemented
+    [ testCase "Create [1] with cons" $
+        let xs :: [Int]
+            xs = runST $ do
+              ys <- empty
+              void (cons ys 1)
+              toList ys
+         in xs @?= [1],
+      testCase "Create [1, 2] with cons" $
+        let xs :: [Int]
+            xs = runST $ do
+              ys <- empty
+              void (cons ys 2)
+              void (cons ys 1)
+              toList ys
+         in xs @?= [1, 2],
+      testCase "Create [1, 2, 3] with cons" $
+        let xs :: [Int]
+            xs = runST $ do
+              ys <- empty
+              void (cons ys 3)
+              void (cons ys 2)
+              void (cons ys 1)
+              toList ys
+         in xs @?= [1, 2, 3]
     ]
 
 snocTests :: TestTree
