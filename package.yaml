@@ -59,6 +59,8 @@ benchmarks:
   apply-merge-benchmarks:
     source-dirs: bench
     main: Main.hs
+    other-modules:
+    - Bench.Data.DoublyLinkedList.STRef
     dependencies:
     - apply-merge
     - tasty-bench

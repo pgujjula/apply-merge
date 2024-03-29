@@ -3,6 +3,7 @@
 
 module Main (main) where
 
+import Bench.Data.DoublyLinkedList.STRef qualified
 import Data.Function ((&))
 import Data.List.ApplyMerge.DoublyLinkedList qualified
 import Data.List.ApplyMerge.IntMap qualified
@@ -16,7 +17,8 @@ main =
         "DoublyLinkedList"
         Data.List.ApplyMerge.DoublyLinkedList.applyMerge,
       benchCommon "IntMap" Data.List.ApplyMerge.IntMap.applyMerge,
-      benchCommon "IntSet" Data.List.ApplyMerge.IntSet.applyMerge
+      benchCommon "IntSet" Data.List.ApplyMerge.IntSet.applyMerge,
+      Bench.Data.DoublyLinkedList.STRef.benchmarks
     ]
 
 benchCommon ::
