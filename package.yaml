@@ -27,7 +27,7 @@ language: GHC2021
 library:
   source-dirs: src
   exposed-modules:
-  - Data.DoublyLinkedList.Mutable
+  - Data.DoublyLinkedList.STRef
   - Data.List.ApplyMerge
   - Data.List.ApplyMerge.DoublyLinkedList
   - Data.List.ApplyMerge.IntMap
@@ -43,7 +43,7 @@ tests:
     source-dirs: test
     main: Main.hs
     other-modules:
-    - Test.Data.DoublyLinkedList.Mutable
+    - Test.Data.DoublyLinkedList.STRef
     - Test.Data.List.ApplyMerge.Common
     - Test.Data.List.ApplyMerge.DoublyLinkedList
     - Test.Data.List.ApplyMerge.IntMap

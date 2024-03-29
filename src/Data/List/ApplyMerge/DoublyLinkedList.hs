@@ -10,7 +10,7 @@ import Control.Monad.ST qualified as Strict
 import Control.Monad.ST.Lazy qualified as Lazy
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Maybe (MaybeT (..), hoistMaybe, runMaybeT)
-import Data.DoublyLinkedList.Mutable qualified as DoublyLinked
+import Data.DoublyLinkedList.STRef qualified as DoublyLinked
 import Data.List.NonEmpty (NonEmpty, nonEmpty)
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Maybe (fromMaybe)

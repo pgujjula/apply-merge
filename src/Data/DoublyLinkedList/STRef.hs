@@ -5,7 +5,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedRecordDot #-}
 
-module Data.DoublyLinkedList.Mutable
+module Data.DoublyLinkedList.STRef
   ( -- * Types
     DoublyLinkedList,
     DoublyLinkedNode,

@@ -24,7 +24,7 @@ source-repository head
 
 library
   exposed-modules:
-      Data.DoublyLinkedList.Mutable
+      Data.DoublyLinkedList.STRef
       Data.List.ApplyMerge
       Data.List.ApplyMerge.DoublyLinkedList
       Data.List.ApplyMerge.IntMap
@@ -48,7 +48,7 @@ test-suite apply-merge-tests
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
-      Test.Data.DoublyLinkedList.Mutable
+      Test.Data.DoublyLinkedList.STRef
       Test.Data.List.ApplyMerge.Common
       Test.Data.List.ApplyMerge.DoublyLinkedList
       Test.Data.List.ApplyMerge.IntMap

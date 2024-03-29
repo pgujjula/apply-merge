@@ -1,7 +1,7 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 
-module Test.Data.DoublyLinkedList.Mutable (tests) where
+module Test.Data.DoublyLinkedList.STRef (tests) where
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.ExpectedFailure (ignoreTest)
@@ -11,7 +11,7 @@ tests :: TestTree
 tests =
   ignoreTest $
     testGroup
-      "Data.DoublyLinkedList.Mutable"
+      "Data.DoublyLinkedList.STRef"
       [ constructionTests,
         traversalTests,
         queryTests,
