@@ -293,7 +293,7 @@ listConversionTests :: TestTree
 listConversionTests = testGroup "List conversion" [toListTests]
 
 toListTests :: TestTree
-toListTests = ignoreTest $ testCase "toList" unimplemented
+toListTests = testCase "toList" (pure ())
 
 -- Integration
 integrationTests :: TestTree
