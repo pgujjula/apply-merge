@@ -41,12 +41,14 @@ tests:
     source-dirs: test
     main: Main.hs
     other-modules:
+    - Test.Data.DoublyLinkedList.Mutable
     - Test.Data.List.ApplyMerge.Common
     - Test.Data.List.ApplyMerge.IntMap
     - Test.Data.List.ApplyMerge.IntSet
     dependencies:
     - apply-merge
     - tasty
+    - tasty-expected-failure
     - tasty-hunit
 
 benchmarks:

@@ -3,6 +3,7 @@
 
 module Main (main) where
 
+import Test.Data.DoublyLinkedList.Mutable qualified (tests)
 import Test.Data.List.ApplyMerge.IntMap qualified (tests)
 import Test.Data.List.ApplyMerge.IntSet qualified (tests)
 import Test.Tasty (TestTree, defaultMain, testGroup)
@@ -14,6 +15,7 @@ tests :: TestTree
 tests =
   testGroup
     ""
-    [ Test.Data.List.ApplyMerge.IntMap.tests,
+    [ Test.Data.DoublyLinkedList.Mutable.tests,
+      Test.Data.List.ApplyMerge.IntMap.tests,
       Test.Data.List.ApplyMerge.IntSet.tests
     ]
