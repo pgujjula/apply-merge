@@ -26,6 +26,7 @@ library
   exposed-modules:
       Data.DoublyLinkedList.Mutable
       Data.List.ApplyMerge
+      Data.List.ApplyMerge.DoublyLinkedList
       Data.List.ApplyMerge.IntMap
       Data.List.ApplyMerge.IntSet
   other-modules:
@@ -40,6 +41,7 @@ library
     , containers
     , mtl
     , pqueue
+    , transformers
   default-language: GHC2021
 
 test-suite apply-merge-tests
@@ -48,6 +50,7 @@ test-suite apply-merge-tests
   other-modules:
       Test.Data.DoublyLinkedList.Mutable
       Test.Data.List.ApplyMerge.Common
+      Test.Data.List.ApplyMerge.DoublyLinkedList
       Test.Data.List.ApplyMerge.IntMap
       Test.Data.List.ApplyMerge.IntSet
   hs-source-dirs:

@@ -4,6 +4,7 @@
 module Main (main) where
 
 import Data.Function ((&))
+import Data.List.ApplyMerge.DoublyLinkedList qualified
 import Data.List.ApplyMerge.IntMap qualified
 import Data.List.ApplyMerge.IntSet qualified
 import Test.Tasty.Bench (Benchmark, bench, bgroup, defaultMain, nf)
@@ -11,7 +12,10 @@ import Test.Tasty.Bench (Benchmark, bench, bgroup, defaultMain, nf)
 main :: IO ()
 main =
   defaultMain
-    [ benchCommon "IntMap" Data.List.ApplyMerge.IntMap.applyMerge,
+    [ benchCommon
+        "DoublyLinkedList"
+        Data.List.ApplyMerge.DoublyLinkedList.applyMerge,
+      benchCommon "IntMap" Data.List.ApplyMerge.IntMap.applyMerge,
       benchCommon "IntSet" Data.List.ApplyMerge.IntSet.applyMerge
     ]
 

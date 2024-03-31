@@ -29,11 +29,13 @@ library:
   exposed-modules:
   - Data.DoublyLinkedList.Mutable
   - Data.List.ApplyMerge
+  - Data.List.ApplyMerge.DoublyLinkedList
   - Data.List.ApplyMerge.IntMap
   - Data.List.ApplyMerge.IntSet
   dependencies:
   - containers
   - mtl
+  - transformers
   - pqueue
 
 tests:
@@ -43,6 +45,7 @@ tests:
     other-modules:
     - Test.Data.DoublyLinkedList.Mutable
     - Test.Data.List.ApplyMerge.Common
+    - Test.Data.List.ApplyMerge.DoublyLinkedList
     - Test.Data.List.ApplyMerge.IntMap
     - Test.Data.List.ApplyMerge.IntSet
     dependencies:
