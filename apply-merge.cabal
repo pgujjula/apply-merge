@@ -29,6 +29,7 @@ library
       Data.List.ApplyMerge.DoublyLinkedList
       Data.List.ApplyMerge.IntMap
       Data.List.ApplyMerge.IntSet
+      Data.PQueue.Prio.Min.Mutable
   other-modules:
       Paths_apply_merge
   autogen-modules:
@@ -42,6 +43,7 @@ library
     , mtl
     , pqueue
     , transformers
+    , vector
   default-language: GHC2021
 
 test-suite apply-merge-tests
@@ -53,12 +55,14 @@ test-suite apply-merge-tests
       Test.Data.List.ApplyMerge.DoublyLinkedList
       Test.Data.List.ApplyMerge.IntMap
       Test.Data.List.ApplyMerge.IntSet
+      Test.Data.PQueue.Prio.Min.Mutable
   hs-source-dirs:
       test
   ghc-options: -Wall
   build-depends:
       apply-merge
     , base >=4.16 && <5
+    , falsify
     , tasty
     , tasty-expected-failure
     , tasty-hunit
@@ -71,6 +75,7 @@ benchmark apply-merge-benchmarks
   other-modules:
       Bench.Data.DoublyLinkedList.STRef
       Bench.PriorityQueue.MinPQueue
+      Bench.PriorityQueue.MinPQueue.Mutable
   hs-source-dirs:
       bench
   ghc-options: -Wall

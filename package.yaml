@@ -32,11 +32,13 @@ library:
   - Data.List.ApplyMerge.DoublyLinkedList
   - Data.List.ApplyMerge.IntMap
   - Data.List.ApplyMerge.IntSet
+  - Data.PQueue.Prio.Min.Mutable
   dependencies:
   - containers
   - mtl
   - transformers
   - pqueue
+  - vector
 
 tests:
   apply-merge-tests:
@@ -48,8 +50,10 @@ tests:
     - Test.Data.List.ApplyMerge.DoublyLinkedList
     - Test.Data.List.ApplyMerge.IntMap
     - Test.Data.List.ApplyMerge.IntSet
+    - Test.Data.PQueue.Prio.Min.Mutable
     dependencies:
     - apply-merge
+    - falsify
     - tasty
     - tasty-expected-failure
     - tasty-hunit
@@ -62,6 +66,7 @@ benchmarks:
     other-modules:
     - Bench.Data.DoublyLinkedList.STRef
     - Bench.PriorityQueue.MinPQueue
+    - Bench.PriorityQueue.MinPQueue.Mutable
     dependencies:
     - apply-merge
     - containers
