@@ -40,8 +40,8 @@ where
 
 import Control.Arrow ((>>>))
 import Control.Monad (forM_)
-import Control.Monad.ST.Lazy (ST)
-import Data.STRef.Lazy (STRef, newSTRef, readSTRef, writeSTRef)
+import Control.Monad.ST (ST)
+import Data.STRef (STRef, newSTRef, readSTRef, writeSTRef)
 import Prelude hiding (head, last, null)
 
 data DoublyLinkedList s a = DoublyLinkedList

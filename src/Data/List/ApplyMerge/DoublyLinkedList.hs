@@ -6,7 +6,8 @@
 module Data.List.ApplyMerge.DoublyLinkedList (applyMerge) where
 
 import Control.Monad (guard)
-import Control.Monad.ST.Lazy (ST, runST)
+import Control.Monad.ST qualified as Strict
+import Control.Monad.ST.Lazy qualified as Lazy
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Maybe (MaybeT (..), hoistMaybe, runMaybeT)
 import Data.DoublyLinkedList.Mutable qualified as DoublyLinked
@@ -34,9 +35,9 @@ applyMerge f as bs =
 
 applyMergeNonEmpty ::
   (Ord c) => (a -> b -> c) -> NonEmpty a -> NonEmpty b -> [c]
-applyMergeNonEmpty f as bs = runST $ do
-  frontier <- initialFrontier f as bs
-  unfoldrM (step f) frontier
+applyMergeNonEmpty f as bs = Lazy.runST $ do
+  frontier <- Lazy.strictToLazyST (initialFrontier f as bs)
+  unfoldrM (Lazy.strictToLazyST . step f) frontier
 
 unfoldrM :: (Monad m) => (b -> m (Maybe (a, b))) -> b -> m [a]
 unfoldrM f seed = do
@@ -46,7 +47,7 @@ unfoldrM f seed = do
     Just (x, newSeed) -> (x :) <$> unfoldrM f newSeed
 
 initialFrontier ::
-  (a -> b -> c) -> NonEmpty a -> NonEmpty b -> ST s (Frontier s a b c)
+  (a -> b -> c) -> NonEmpty a -> NonEmpty b -> Strict.ST s (Frontier s a b c)
 initialFrontier f as bs = do
   list <- DoublyLinked.empty
   position <- DoublyLinked.cons list (0 :: Int, 0 :: Int)
@@ -64,7 +65,7 @@ step ::
   (Ord c) =>
   (a -> b -> c) ->
   Frontier s a b c ->
-  ST s (Maybe (c, Frontier s a b c))
+  Strict.ST s (Maybe (c, Frontier s a b c))
 step f frontier = runMaybeT $ do
   (node, frontier') <- MaybeT (deleteMinNode frontier)
   frontier'' <- lift $ insertChildA f node frontier'
@@ -73,18 +74,18 @@ step f frontier = runMaybeT $ do
   pure (node.value, frontier''')
 
 deleteMinNode ::
-  (Ord c) => Frontier s a b c -> ST s (Maybe (Node s a b c, Frontier s a b c))
+  (Ord c) => Frontier s a b c -> Strict.ST s (Maybe (Node s a b c, Frontier s a b c))
 deleteMinNode frontier = runMaybeT $ do
   (node, queue') <- MaybeT (pure (MinPQueue.minView frontier.queue))
   let frontier' = Frontier queue'
   pure (node, frontier')
 
-nextNodeValue :: DoublyLinked.DoublyLinkedNode s a -> ST s (Maybe a)
+nextNodeValue :: DoublyLinked.DoublyLinkedNode s a -> Strict.ST s (Maybe a)
 nextNodeValue valueNode = runMaybeT $ do
   valueNode' <- MaybeT $ DoublyLinked.next valueNode
   pure (DoublyLinked.value valueNode')
 
-prevNodeValue :: DoublyLinked.DoublyLinkedNode s a -> ST s (Maybe a)
+prevNodeValue :: DoublyLinked.DoublyLinkedNode s a -> Strict.ST s (Maybe a)
 prevNodeValue valueNode = runMaybeT $ do
   valueNode' <- MaybeT $ DoublyLinked.prev valueNode
   pure (DoublyLinked.value valueNode')
@@ -94,7 +95,7 @@ insertChildA ::
   (a -> b -> c) ->
   Node s a b c ->
   Frontier s a b c ->
-  ST s (Frontier s a b c)
+  Strict.ST s (Frontier s a b c)
 insertChildA f node frontier = fmap (fromMaybe frontier) $ runMaybeT $ do
   let (ia, ib) = DoublyLinked.value node.position
   nextPosition <- lift $ nextNodeValue node.position
@@ -117,7 +118,7 @@ insertChildB ::
   (a -> b -> c) ->
   Node s a b c ->
   Frontier s a b c ->
-  ST s (Frontier s a b c)
+  Strict.ST s (Frontier s a b c)
 insertChildB f node frontier = fmap (fromMaybe frontier) $ runMaybeT $ do
   let (ia, ib) = DoublyLinked.value node.position
   prevPosition <- lift $ prevNodeValue node.position
