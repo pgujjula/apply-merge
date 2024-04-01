@@ -12,8 +12,7 @@ tests =
   ignoreTest $
     testGroup
       "Data.DoublyLinkedList.Mutable"
-      [ nodeConversionTests,
-        constructionTests,
+      [ constructionTests,
         traversalTests,
         queryTests,
         insertionTests,
@@ -22,23 +21,8 @@ tests =
         integrationTests
       ]
 
--- Node conversion
-nodeConversionTests :: TestTree
-nodeConversionTests =
-  testGroup
-    "Node conversion"
-    [ nextNodeToValueNodeTests,
-      prevNodeToValueNodeTests
-    ]
-
 unimplemented :: Assertion
 unimplemented = assertFailure "unimplemented"
-
-nextNodeToValueNodeTests :: TestTree
-nextNodeToValueNodeTests = testCase "nextNodeToValueNode" unimplemented
-
-prevNodeToValueNodeTests :: TestTree
-prevNodeToValueNodeTests = testCase "prevNodeToValueNode" unimplemented
 
 -- Construction
 constructionTests :: TestTree
@@ -57,7 +41,14 @@ fromListTests = testCase "fromList" unimplemented
 
 -- Traversal
 traversalTests :: TestTree
-traversalTests = testGroup "Traversal" [nextTests, prevTests]
+traversalTests =
+  testGroup "Traversal" [headTests, lastTests, nextTests, prevTests]
+
+headTests :: TestTree
+headTests = testCase "head" unimplemented
+
+lastTests :: TestTree
+lastTests = testCase "last" unimplemented
 
 nextTests :: TestTree
 nextTests = testCase "next" unimplemented
@@ -100,10 +91,10 @@ insertAfterTests = testCase "insertAfter" unimplemented
 
 -- Deletion
 deletionTests :: TestTree
-deletionTests = testGroup "Deletion" [deleteNodeTests]
+deletionTests = testGroup "Deletion" [deleteTests]
 
-deleteNodeTests :: TestTree
-deleteNodeTests = testCase "deleteNode" unimplemented
+deleteTests :: TestTree
+deleteTests = testCase "delete" unimplemented
 
 -- List conversion
 listConversionTests :: TestTree

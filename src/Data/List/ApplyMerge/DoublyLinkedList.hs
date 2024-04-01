@@ -17,7 +17,7 @@ import Data.PQueue.Prio.Min (MinPQueue)
 import Data.PQueue.Prio.Min qualified as MinPQueue
 
 data Node s a b c = Node
-  { position :: DoublyLinked.ValueNode s (Int, Int),
+  { position :: DoublyLinked.DoublyLinkedNode s (Int, Int),
     value :: c,
     as :: NonEmpty a,
     bs :: NonEmpty b
@@ -69,7 +69,7 @@ step f frontier = runMaybeT $ do
   (node, frontier') <- MaybeT (deleteMinNode frontier)
   frontier'' <- lift $ insertChildA f node frontier'
   frontier''' <- lift $ insertChildB f node frontier''
-  lift (DoublyLinked.deleteNode node.position)
+  lift (DoublyLinked.delete node.position)
   pure (node.value, frontier''')
 
 deleteMinNode ::
@@ -79,16 +79,14 @@ deleteMinNode frontier = runMaybeT $ do
   let frontier' = Frontier queue'
   pure (node, frontier')
 
-nextNodeValue :: DoublyLinked.ValueNode s a -> ST s (Maybe a)
+nextNodeValue :: DoublyLinked.DoublyLinkedNode s a -> ST s (Maybe a)
 nextNodeValue valueNode = runMaybeT $ do
-  nextNode <- lift $ DoublyLinked.next valueNode
-  valueNode' <- hoistMaybe $ DoublyLinked.nextNodeToValueNode nextNode
+  valueNode' <- MaybeT $ DoublyLinked.next valueNode
   pure (DoublyLinked.value valueNode')
 
-prevNodeValue :: DoublyLinked.ValueNode s a -> ST s (Maybe a)
+prevNodeValue :: DoublyLinked.DoublyLinkedNode s a -> ST s (Maybe a)
 prevNodeValue valueNode = runMaybeT $ do
-  prevNode <- lift $ DoublyLinked.prev valueNode
-  valueNode' <- hoistMaybe $ DoublyLinked.prevNodeToValueNode prevNode
+  valueNode' <- MaybeT $ DoublyLinked.prev valueNode
   pure (DoublyLinked.value valueNode')
 
 insertChildA ::
@@ -133,7 +131,7 @@ insertChildB f node frontier = fmap (fromMaybe frontier) $ runMaybeT $ do
 
 mkNode ::
   (a -> b -> c) ->
-  DoublyLinked.ValueNode s (Int, Int) ->
+  DoublyLinked.DoublyLinkedNode s (Int, Int) ->
   NonEmpty a ->
   NonEmpty b ->
   Node s a b c
