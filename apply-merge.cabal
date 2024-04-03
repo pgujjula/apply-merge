@@ -24,16 +24,9 @@ source-repository head
 
 library
   exposed-modules:
-      Data.DoublyLinkedList.STRef
       Data.List.ApplyMerge
-      Data.List.ApplyMerge.DoublyLinkedList
-      Data.List.ApplyMerge.IntMap
-      Data.List.ApplyMerge.IntSet
-      Data.PQueue.Prio.Min.Mutable
   other-modules:
-      Paths_apply_merge
-  autogen-modules:
-      Paths_apply_merge
+      Data.List.ApplyMerge.IntSet
   hs-source-dirs:
       src
   ghc-options: -Wall
@@ -50,6 +43,12 @@ test-suite apply-merge-tests
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
+      Data.DoublyLinkedList.STRef
+      Data.List.ApplyMerge
+      Data.List.ApplyMerge.DoublyLinkedList
+      Data.List.ApplyMerge.IntMap
+      Data.List.ApplyMerge.IntSet
+      Data.PQueue.Prio.Min.Mutable
       Test.Data.DoublyLinkedList.STRef
       Test.Data.List.ApplyMerge.Common
       Test.Data.List.ApplyMerge.DoublyLinkedList
@@ -57,33 +56,43 @@ test-suite apply-merge-tests
       Test.Data.List.ApplyMerge.IntSet
       Test.Data.PQueue.Prio.Min.Mutable
   hs-source-dirs:
+      src
       test
   ghc-options: -Wall
   build-depends:
-      apply-merge
-    , base >=4.16 && <5
+      base >=4.16 && <5
+    , containers
     , falsify
+    , pqueue
     , tasty
     , tasty-expected-failure
     , tasty-hunit
     , transformers
+    , vector
   default-language: GHC2021
 
 benchmark apply-merge-benchmarks
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
+      Data.DoublyLinkedList.STRef
+      Data.List.ApplyMerge
+      Data.List.ApplyMerge.DoublyLinkedList
+      Data.List.ApplyMerge.IntMap
+      Data.List.ApplyMerge.IntSet
+      Data.PQueue.Prio.Min.Mutable
       Bench.Data.DoublyLinkedList.STRef
       Bench.PriorityQueue.MinPQueue
       Bench.PriorityQueue.MinPQueue.Mutable
   hs-source-dirs:
+      src
       bench
   ghc-options: -Wall
   build-depends:
-      apply-merge
-    , base >=4.16 && <5
+      base >=4.16 && <5
     , containers
     , pqueue
     , tasty-bench
     , transformers
+    , vector
   default-language: GHC2021

@@ -27,12 +27,9 @@ language: GHC2021
 library:
   source-dirs: src
   exposed-modules:
-  - Data.DoublyLinkedList.STRef
   - Data.List.ApplyMerge
-  - Data.List.ApplyMerge.DoublyLinkedList
-  - Data.List.ApplyMerge.IntMap
+  other-modules:
   - Data.List.ApplyMerge.IntSet
-  - Data.PQueue.Prio.Min.Mutable
   dependencies:
   - containers
   - mtl
@@ -42,9 +39,17 @@ library:
 
 tests:
   apply-merge-tests:
-    source-dirs: test
+    source-dirs:
+    - src
+    - test
     main: Main.hs
     other-modules:
+    - Data.DoublyLinkedList.STRef
+    - Data.List.ApplyMerge
+    - Data.List.ApplyMerge.DoublyLinkedList
+    - Data.List.ApplyMerge.IntMap
+    - Data.List.ApplyMerge.IntSet
+    - Data.PQueue.Prio.Min.Mutable
     - Test.Data.DoublyLinkedList.STRef
     - Test.Data.List.ApplyMerge.Common
     - Test.Data.List.ApplyMerge.DoublyLinkedList
@@ -52,24 +57,34 @@ tests:
     - Test.Data.List.ApplyMerge.IntSet
     - Test.Data.PQueue.Prio.Min.Mutable
     dependencies:
-    - apply-merge
+    - containers
     - falsify
+    - pqueue
     - tasty
     - tasty-expected-failure
     - tasty-hunit
     - transformers
+    - vector
 
 benchmarks:
   apply-merge-benchmarks:
-    source-dirs: bench
+    source-dirs:
+    - src
+    - bench
     main: Main.hs
     other-modules:
+    - Data.DoublyLinkedList.STRef
+    - Data.List.ApplyMerge
+    - Data.List.ApplyMerge.DoublyLinkedList
+    - Data.List.ApplyMerge.IntMap
+    - Data.List.ApplyMerge.IntSet
+    - Data.PQueue.Prio.Min.Mutable
     - Bench.Data.DoublyLinkedList.STRef
     - Bench.PriorityQueue.MinPQueue
     - Bench.PriorityQueue.MinPQueue.Mutable
     dependencies:
-    - apply-merge
     - containers
     - pqueue
     - tasty-bench
     - transformers
+    - vector
