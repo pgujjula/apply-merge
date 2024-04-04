@@ -18,6 +18,7 @@ description: Please see the README on GitHub at
 
 ghc-options:
 - -Wall
+- -Wunused-packages
 
 dependencies:
 - base >= 4.16 && < 5
@@ -32,10 +33,7 @@ library:
   - Data.List.ApplyMerge.IntSet
   dependencies:
   - containers
-  - mtl
-  - transformers
   - pqueue
-  - vector
 
 tests:
   apply-merge-tests:

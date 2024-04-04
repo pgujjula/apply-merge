@@ -29,14 +29,11 @@ library
       Data.List.ApplyMerge.IntSet
   hs-source-dirs:
       src
-  ghc-options: -Wall
+  ghc-options: -Wall -Wunused-packages
   build-depends:
       base >=4.16 && <5
     , containers
-    , mtl
     , pqueue
-    , transformers
-    , vector
   default-language: GHC2021
 
 test-suite apply-merge-tests
@@ -58,7 +55,7 @@ test-suite apply-merge-tests
   hs-source-dirs:
       src
       test
-  ghc-options: -Wall
+  ghc-options: -Wall -Wunused-packages
   build-depends:
       base >=4.16 && <5
     , containers
@@ -87,7 +84,7 @@ benchmark apply-merge-benchmarks
   hs-source-dirs:
       src
       bench
-  ghc-options: -Wall
+  ghc-options: -Wall -Wunused-packages
   build-depends:
       base >=4.16 && <5
     , containers
