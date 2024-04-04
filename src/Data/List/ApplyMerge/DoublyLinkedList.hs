@@ -9,7 +9,7 @@ import Control.Monad (guard)
 import Control.Monad.ST qualified as Strict
 import Control.Monad.ST.Lazy qualified as Lazy
 import Control.Monad.Trans.Class (lift)
-import Control.Monad.Trans.Maybe (MaybeT (..), hoistMaybe, runMaybeT)
+import Control.Monad.Trans.Maybe (MaybeT (..), runMaybeT)
 import Data.DoublyLinkedList.STRef qualified as DoublyLinked
 import Data.List.NonEmpty (NonEmpty, nonEmpty)
 import Data.List.NonEmpty qualified as NonEmpty
@@ -76,7 +76,7 @@ step f frontier = runMaybeT $ do
 deleteMinNode ::
   (Ord c) => Frontier s a b c -> Strict.ST s (Maybe (Node s a b c, Frontier s a b c))
 deleteMinNode frontier = runMaybeT $ do
-  (node, queue') <- MaybeT (pure (MinPQueue.minView frontier.queue))
+  (node, queue') <- hoistMaybe (MinPQueue.minView frontier.queue)
   let frontier' = Frontier queue'
   pure (node, frontier')
 
@@ -143,3 +143,7 @@ mkNode f position as bs =
       as = as,
       bs = bs
     }
+
+-- Remove this once we allow transformers-0.6
+hoistMaybe :: (Applicative m) => Maybe b -> MaybeT m b
+hoistMaybe = MaybeT . pure
