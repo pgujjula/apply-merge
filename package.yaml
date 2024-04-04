@@ -17,6 +17,9 @@ extra-source-files:
 description: Please see the README on GitHub at
   <https://github.com/pgujjula/apply-merge#readme>
 
+# Can't test with ghc-9.8 series because falsify doesn't support it yet.
+tested-with: GHC == {9.2.8, 9.4.8, 9.6.4}
+
 ghc-options:
 - -Wall
 - -Wunused-packages
