@@ -1,0 +1,55 @@
+# SPDX-FileCopyrightText: Copyright Preetham Gujjula
+# SPDX-License-Identifier: BSD-3-Clause
+
+name: CI
+on:
+  - push
+  - pull_request
+jobs:
+  generate-matrix:
+    name: Generate matrix from cabal
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract the tested GHC versions
+        id: set-matrix
+        uses: kleidukos/get-tested@v0.1.7.0
+        with:
+          cabal-file: apply-merge.cabal
+          ubuntu-version: latest
+          version: 0.1.7.0
+  reuse_compliance_check:
+    name: REUSE compliance check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: REUSE Compliance Check
+        uses: fsfe/reuse-action@v3
+  cabal_test:
+    name: cabal test - ghc-${{ matrix.ghc }}
+    needs: generate-matrix
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    strategy:
+      matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: ${{ matrix.ghc }}
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cabal/store
+          key: ${{ runner.os }}-${{ matrix.ghc }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-${{ matrix.ghc }}
+      - name: Run cabal configure
+        run: cabal configure
+          --enable-tests
+          --test-show-details=streaming
+      - run: cabal update
+      - run: cabal freeze
+      - run: cabal test
+      - run: cabal test --prefer-oldest
