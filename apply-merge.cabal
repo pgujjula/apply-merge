@@ -1,4 +1,4 @@
-cabal-version: 2.2
+cabal-version: 3.6
 
 -- This file has been generated from package.yaml by hpack version 0.36.0.
 --
@@ -31,9 +31,9 @@ library
       src
   ghc-options: -Wall -Wunused-packages
   build-depends:
-      base >=4.16 && <5
-    , containers
-    , pqueue
+      base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20
+    , containers ==0.6.*
+    , pqueue >=1.4 && <1.5 || >=1.5 && <1.6
   default-language: GHC2021
 
 test-suite apply-merge-tests
@@ -57,15 +57,15 @@ test-suite apply-merge-tests
       test
   ghc-options: -Wall -Wunused-packages
   build-depends:
-      base >=4.16 && <5
-    , containers
-    , falsify
-    , pqueue
-    , tasty
-    , tasty-expected-failure
-    , tasty-hunit
-    , transformers
-    , vector
+      base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20
+    , containers ==0.6.*
+    , falsify ==0.2.*
+    , pqueue >=1.4 && <1.5 || >=1.5 && <1.6
+    , tasty >=1.4 && <1.5 || >=1.5 && <1.6
+    , tasty-expected-failure ==0.12.*
+    , tasty-hunit ==0.10.*
+    , transformers >=0.5 && <0.6 || >=0.6 && <0.7
+    , vector >=0.12 && <0.13 || >=0.13 && <0.14
   default-language: GHC2021
 
 benchmark apply-merge-benchmarks
@@ -86,10 +86,10 @@ benchmark apply-merge-benchmarks
       bench
   ghc-options: -Wall -Wunused-packages
   build-depends:
-      base >=4.16 && <5
-    , containers
-    , pqueue
-    , tasty-bench
-    , transformers
-    , vector
+      base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20
+    , containers ==0.6.*
+    , pqueue >=1.4 && <1.5 || >=1.5 && <1.6
+    , tasty-bench ==0.3.*
+    , transformers >=0.5 && <0.6 || >=0.6 && <0.7
+    , vector >=0.12 && <0.13 || >=0.13 && <0.14
   default-language: GHC2021

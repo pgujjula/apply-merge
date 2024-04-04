@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright Preetham Gujjula
 # SPDX-License-Identifier: BSD-3-Clause
-
+verbatim:
+  cabal-version: 3.6
 name:       apply-merge
 version:    0.0.0.0
 github:     "pgujjula/apply-merge"
@@ -21,7 +22,7 @@ ghc-options:
 - -Wunused-packages
 
 dependencies:
-- base >= 4.16 && < 5
+- base ^>= {4.16, 4.17, 4.18, 4.19}
 
 language: GHC2021
 
@@ -32,8 +33,8 @@ library:
   other-modules:
   - Data.List.ApplyMerge.IntSet
   dependencies:
-  - containers
-  - pqueue
+  - containers ^>= {0.6}
+  - pqueue ^>= {1.4, 1.5}
 
 tests:
   apply-merge-tests:
@@ -55,14 +56,14 @@ tests:
     - Test.Data.List.ApplyMerge.IntSet
     - Test.Data.PQueue.Prio.Min.Mutable
     dependencies:
-    - containers
-    - falsify
-    - pqueue
-    - tasty
-    - tasty-expected-failure
-    - tasty-hunit
-    - transformers
-    - vector
+    - containers ^>= {0.6}
+    - falsify ^>= {0.2}
+    - pqueue ^>= {1.4, 1.5}
+    - tasty ^>= {1.4, 1.5}
+    - tasty-expected-failure ^>= {0.12}
+    - tasty-hunit ^>= {0.10}
+    - transformers ^>= {0.5, 0.6}
+    - vector ^>= {0.12, 0.13}
 
 benchmarks:
   apply-merge-benchmarks:
@@ -81,8 +82,8 @@ benchmarks:
     - Bench.PriorityQueue.MinPQueue
     - Bench.PriorityQueue.MinPQueue.Mutable
     dependencies:
-    - containers
-    - pqueue
-    - tasty-bench
-    - transformers
-    - vector
+    - containers ^>= {0.6}
+    - pqueue ^>= {1.4, 1.5}
+    - tasty-bench ^>= {0.3}
+    - transformers ^>= {0.5, 0.6}
+    - vector ^>= {0.12, 0.13}
