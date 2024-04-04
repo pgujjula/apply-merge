@@ -10,7 +10,7 @@ author:     "Preetham Gujjula"
 maintainer: "libraries@mail.preetham.io"
 copyright:  "Preetham Gujjula"
 
-extra-source-files:
+extra-doc-files:
 - README.md
 - ChangeLog.md
 

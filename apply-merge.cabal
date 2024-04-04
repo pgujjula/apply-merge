@@ -16,7 +16,7 @@ license:        BSD-3-Clause
 build-type:     Simple
 tested-with:
     GHC == {9.2.8, 9.4.8, 9.6.4}
-extra-source-files:
+extra-doc-files:
     README.md
     ChangeLog.md
 
