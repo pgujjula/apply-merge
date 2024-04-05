@@ -19,6 +19,7 @@ tested-with:
 extra-doc-files:
     README.md
     ChangeLog.md
+    docs/ALGORITHM.md
 
 source-repository head
   type: git
