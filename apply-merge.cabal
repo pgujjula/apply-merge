@@ -6,11 +6,14 @@ cabal-version: 3.6
 
 name:           apply-merge
 version:        0.0.0.0
+synopsis:       Lift a binary, non-decreasing function onto ordered lists and order the output
 description:    Please see the README on GitHub at <https://github.com/pgujjula/apply-merge#readme>
+category:       Data
+stability:      experimental
 homepage:       https://github.com/pgujjula/apply-merge#readme
 bug-reports:    https://github.com/pgujjula/apply-merge/issues
 author:         Preetham Gujjula
-maintainer:     libraries@mail.preetham.io
+maintainer:     Preetham Gujjula <libraries@mail.preetham.io>
 copyright:      Preetham Gujjula
 license:        BSD-3-Clause
 build-type:     Simple
