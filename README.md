@@ -1,6 +1,6 @@
 <!--
 SPDX-FileCopyrightText: Copyright Preetham Gujjula
-SPDX-License-Identifier: CC-BY-SA-4.0
+SPDX-License-Identifier: BSD-3-Clause
 -->
 
 # apply-merge
@@ -10,3 +10,8 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 ⚠️ Under construction. No stability guarantees, even commit history may be
 overwritten.
+
+## Licensing
+This project licensed under BSD-3-Clause (except for `.gitignore`, which is
+under CC0-1.0), and follows [REUSE](https://reuse.software) licensing
+principles.

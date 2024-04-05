@@ -1,6 +1,6 @@
 <!--
 SPDX-FileCopyrightText: Copyright Preetham Gujjula
-SPDX-License-Identifier: CC-BY-SA-4.0
+SPDX-License-Identifier: BSD-3-Clause
 -->
 
 # Changelog for apply-merge
