@@ -55,7 +55,9 @@ jobs:
         run: cabal configure
           --enable-tests
           --test-show-details=streaming
+          --enable-benchmarks
       - run: cabal update
       - run: cabal freeze
+      - run: cabal build
       - run: cabal test
       - run: cabal test --prefer-oldest
