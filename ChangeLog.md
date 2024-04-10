@@ -5,6 +5,12 @@ SPDX-License-Identifier: BSD-3-Clause
 
 # Changelog for apply-merge
 
+## 0.1.0.0 (Release Candidate 2)
+
+### Updated
+* Incorporated feedback from _meeeow_ on Haskell Discourse
+  ([link](https://discourse.haskell.org/t/apply-merge-lift-a-binary-increasing-function-onto-ordered-lists-and-produce-ordered-output/9269/4)).
+
 ## 0.1.0.0 (Release Candidate 1)
 
 ### Added
