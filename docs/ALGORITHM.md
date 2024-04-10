@@ -84,7 +84,7 @@ Let's think about `smooth3` after 3 elements have been produced:
 </pre>
 
 After producing `1, 2, 3`, the next element in `smooth3` can only be one of
-`{4, 6, 9}`. We know this without preforming any comparisons, just by the
+`{4, 6, 9}`. We know this without performing any comparisons, just by the
 positions of these elements in the grid, as these are the only elements whose
 up- and left-neighbors have already been produced.
 
@@ -166,6 +166,20 @@ $O(\text{log } \sqrt{n}) = O(\text{log } n)$ time. Therefore, producing $n$
 elements of `applyMerge f xs ys` takes $O(n \log n)$ time and $O(\sqrt{n})$
 auxiliary space, assuming that `f` and `compare` take $O(1)$ time.
 
+### Note about memory usage
+Note that `applyMerge` retains the input lists in memory, which could cause
+unexpected memory usage when the input lists are lazily generated. For example,
+```
+sum (take n (applyMerge const [1 :: Int ..] [1 :: Int ..]))
+```
+requires retaining the first $n$ elements of the second list, and so uses $O(n)$
+space. Constrast this with
+```
+sum (take n (applyMerge (+) [1 :: Int ..] [1 :: Int ..]))
+```
+which requires retaining the first $O(\sqrt{n})$ elements of each list, and uses
+$O(\sqrt{n})$ space.
+
 ## More examples
 
 With `applyMerge`, we can implement a variety of complex algorithms succinctly.
@@ -198,6 +212,8 @@ squarefrees = [1..] `minus` applyMerge (*) (map (^2) primes) [1..]
 
 # Prior work
 
+## mergeAll from data-ordlist
+
 In <code>[data-ordlist](https://www.stackage.org/lts/package/data-ordlist)</code>,
 there is <code>[mergeAll](https://www.stackage.org/haddock/lts/data-ordlist/Data-List-Ordered.html#v:mergeAll) :: Ord a => [[a]] -> [a]</code>,
 which merges a potentially infinite list of ordered lists, where the heads of
@@ -212,5 +228,32 @@ applyMerge f xs ys =
 
 However, `mergeAll` uses $O(n)$ auxiliary space in the worst case, while our
 implementation of `applyMerge` uses just $O(\sqrt{n})$ auxiliary space.
+
+## Skiena's algorithm
+
+In [The Algorithm Design Manual](https://doi.org/10.1007%2F978-1-84800-070-4_4),
+Steven Skiena describes an algorithm for minimizing the sum of two airline
+ticket fares:
+
+> “Got it!,” I said. “We will keep track of index pairs in a priority queue,
+> with the sum of the fare costs as the key for the pair. Initially we put only
+> pair (1, 1) on the queue. If it proves it is not feasible, we put its two
+> successors on—namely (1, 2) and (2, 1). In general, we enqueue pairs
+> (i + 1, j) and (i, j + 1) after evaluating/rejecting pair (i, j). We will get
+> through all the pairs in the right order if we do so.”
+>
+> The gang caught on quickly. “Sure. But what about duplicates? We will
+> construct pair (x, y) two different ways, both when expanding (x − 1, y) and
+> (x, y −1).”
+>
+> “You are right. We need an extra data structure to guard against duplicates.
+> The simplest might be a hash table to tell us whether a given pair exists in
+> the priority queue before we insert a duplicate. In fact, we will never have
+> more than n active pairs in our data structure, since there can only be one
+> pair for each distinct value of the first coordinate.”
+
+This is similar to the `applyMerge` algorithm, except that `applyMerge` has an
+optimization to check that we don’t add (x, y) to the priority queue when there
+is already an (x′, y) with x < x′ or (x, y′) with y < y′ in the queue.
 
 [^1]: Note that this is really the Sieve of Erastosthenes, as defined in the classic [The Genuine Sieve of Eratosthenes](https://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf). Constrast this to other simple prime generation implementations, such as <pre> primes = sieve [2..] where sieve (p : xs) = p : sieve [x | x <- xs, x \`rem\` p > 0]</pre> which is actually trial division and not a faithful implementation of the Sieve of Erastosthenes.
