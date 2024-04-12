@@ -7,6 +7,7 @@ SPDX-License-Identifier: BSD-3-Clause
 
 [![CI](https://github.com/pgujjula/apply-merge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/pgujjula/apply-merge/actions/workflows/ci.yml)
 [![REUSE status](https://api.reuse.software/badge/github.com/pgujjula/apply-merge)](https://api.reuse.software/info/github.com/pgujjula/apply-merge)
+![Hackage Version](https://img.shields.io/hackage/v/apply-merge?style=flat&color=blue)
 
 Lift a binary, non-decreasing function onto ordered lists and order the output
 
