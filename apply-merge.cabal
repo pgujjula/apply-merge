@@ -1,4 +1,4 @@
-cabal-version: 3.6
+cabal-version: 2.2
 
 -- This file has been generated from package.yaml by hpack version 0.36.0.
 --
@@ -18,7 +18,9 @@ copyright:      Preetham Gujjula
 license:        BSD-3-Clause
 build-type:     Simple
 tested-with:
-    GHC == {9.2.8, 9.4.8, 9.6.4}
+    GHC == 9.2.8
+  , GHC == 9.4.8
+  , GHC == 9.6.4
 extra-doc-files:
     README.md
     ChangeLog.md

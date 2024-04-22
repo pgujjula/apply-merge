@@ -1,7 +1,5 @@
 # SPDX-FileCopyrightText: Copyright Preetham Gujjula
 # SPDX-License-Identifier: BSD-3-Clause
-verbatim:
-  cabal-version: 3.6
 name:        apply-merge
 version:     0.1.0.0
 synopsis:    Lift a binary, non-decreasing function onto ordered lists and order the output
@@ -15,7 +13,10 @@ copyright:   "Preetham Gujjula"
 license:     BSD-3-Clause
 
 # Can't test with ghc-9.8 series because falsify doesn't support it yet.
-tested-with: GHC == {9.2.8, 9.4.8, 9.6.4}
+tested-with:
+- GHC == 9.2.8
+- GHC == 9.4.8
+- GHC == 9.6.4
 
 extra-doc-files:
 - README.md
