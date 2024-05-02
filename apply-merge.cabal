@@ -25,6 +25,7 @@ extra-doc-files:
     README.md
     ChangeLog.md
     docs/ALGORITHM.md
+    LICENSES/BSD-3-Clause.txt
 
 source-repository head
   type: git
