@@ -59,19 +59,6 @@ tests:
     - src
     - test
     main: Main.hs
-    other-modules:
-    - Data.DoublyLinkedList.STRef
-    - Data.List.ApplyMerge
-    - Data.List.ApplyMerge.DoublyLinkedList
-    - Data.List.ApplyMerge.IntMap
-    - Data.List.ApplyMerge.IntSet
-    - Data.PQueue.Prio.Min.Mutable
-    - Test.Data.DoublyLinkedList.STRef
-    - Test.Data.List.ApplyMerge.Common
-    - Test.Data.List.ApplyMerge.DoublyLinkedList
-    - Test.Data.List.ApplyMerge.IntMap
-    - Test.Data.List.ApplyMerge.IntSet
-    - Test.Data.PQueue.Prio.Min.Mutable
     dependencies:
     - containers ^>= {0.6}
     - pqueue ^>= {1.4, 1.5}
@@ -88,16 +75,6 @@ benchmarks:
     - src
     - bench
     main: Main.hs
-    other-modules:
-    - Data.DoublyLinkedList.STRef
-    - Data.List.ApplyMerge
-    - Data.List.ApplyMerge.DoublyLinkedList
-    - Data.List.ApplyMerge.IntMap
-    - Data.List.ApplyMerge.IntSet
-    - Data.PQueue.Prio.Min.Mutable
-    - Bench.Data.DoublyLinkedList.STRef
-    - Bench.PriorityQueue.MinPQueue
-    - Bench.PriorityQueue.MinPQueue.Mutable
     dependencies:
     - containers ^>= {0.6}
     - pqueue ^>= {1.4, 1.5}

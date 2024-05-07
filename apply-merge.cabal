@@ -62,6 +62,9 @@ test-suite apply-merge-tests
       Test.Data.List.ApplyMerge.IntMap
       Test.Data.List.ApplyMerge.IntSet
       Test.Data.PQueue.Prio.Min.Mutable
+      Paths_apply_merge
+  autogen-modules:
+      Paths_apply_merge
   hs-source-dirs:
       src
       test
@@ -91,6 +94,9 @@ benchmark apply-merge-benchmarks
       Bench.Data.DoublyLinkedList.STRef
       Bench.PriorityQueue.MinPQueue
       Bench.PriorityQueue.MinPQueue.Mutable
+      Paths_apply_merge
+  autogen-modules:
+      Paths_apply_merge
   hs-source-dirs:
       src
       bench
