@@ -43,6 +43,16 @@ library:
   - containers ^>= {0.6}
   - pqueue ^>= {1.4, 1.5}
 
+# The library implements apply-merge in a few different ways, with slightly
+# different performance characteristics, but only exports the current best
+# implementation. But we wish to retain all the implementations, in case
+# we are able to optimize a different implementation in the future to be better
+# than the current best.
+#
+# So, we structure the test and benchmark suites to cover all the
+# implementations, not just the one exposed by the library. To do this, the test
+# and benchmark suites don't import the library, and instead directly include
+# the src/ files.
 tests:
   apply-merge-tests:
     source-dirs:
