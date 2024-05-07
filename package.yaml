@@ -12,11 +12,11 @@ maintainer:  "Preetham Gujjula <libraries@mail.preetham.io>"
 copyright:   "Preetham Gujjula"
 license:     BSD-3-Clause
 
-# Can't test with ghc-9.8 series because falsify doesn't support it yet.
 tested-with:
 - GHC == 9.2.8
 - GHC == 9.4.8
 - GHC == 9.6.4
+- GHC == 9.8.2
 
 extra-doc-files:
 - README.md
