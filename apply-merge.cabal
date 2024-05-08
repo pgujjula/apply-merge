@@ -61,6 +61,7 @@ test-suite apply-merge-tests
       Test.ApplyMerge.IntMap
       Test.ApplyMerge.IntSet
       Test.Data.DoublyLinkedList.STRef
+      Test.Data.List.ApplyMerge
       Test.Data.PQueue.Prio.Min.Mutable
   hs-source-dirs:
       src
