@@ -5,8 +5,8 @@
 
 module ApplyMerge.IntMap (applyMerge) where
 
+import Control.Arrow ((>>>))
 import Control.Monad (guard)
-import Data.Function ((&))
 import Data.IntMap.Strict (IntMap)
 import Data.IntMap.Strict qualified as IntMap
 import Data.List (unfoldr)
@@ -43,13 +43,7 @@ initialFrontier f as bs =
         }
 
 step :: (Ord c) => (a -> b -> c) -> Frontier a b c -> Maybe (c, Frontier a b c)
-step f frontier = do
-  (node, frontier') <- deleteMinNode frontier
-  let frontier'' =
-        frontier'
-          & insertChildA f node
-          & insertChildB f node
-  pure (node.value, frontier'')
+step f = fmap (uncurry (peekInsertChildren f)) . deleteMinNode
 
 deleteMinNode :: (Ord c) => Frontier a b c -> Maybe (Node a b c, Frontier a b c)
 deleteMinNode frontier = do
@@ -61,6 +55,17 @@ deleteMinNode frontier = do
             indexMap = IntMap.delete ia frontier.indexMap
           }
   pure (node, frontier')
+
+peekInsertChildren ::
+  (Ord c) =>
+  (a -> b -> c) ->
+  Node a b c ->
+  Frontier a b c ->
+  (c, Frontier a b c)
+peekInsertChildren f node =
+  insertChildA f node
+    >>> insertChildB f node
+    >>> (node.value,)
 
 insertChildA ::
   (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
