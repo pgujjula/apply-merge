@@ -3,13 +3,13 @@
 
 module Main (main) where
 
+import ApplyMerge.DoublyLinkedList qualified
+import ApplyMerge.IntMap qualified
+import ApplyMerge.IntSet qualified
 import Bench.Data.DoublyLinkedList.STRef qualified
 import Bench.PriorityQueue.MinPQueue qualified
 import Bench.PriorityQueue.MinPQueue.Mutable qualified
 import Data.Function ((&))
-import Data.List.ApplyMerge.DoublyLinkedList qualified
-import Data.List.ApplyMerge.IntMap qualified
-import Data.List.ApplyMerge.IntSet qualified
 import Test.Tasty.Bench (Benchmark, bench, bgroup, defaultMain, nf)
 
 main :: IO ()
@@ -17,9 +17,9 @@ main =
   defaultMain
     [ benchCommon
         "DoublyLinkedList"
-        Data.List.ApplyMerge.DoublyLinkedList.applyMerge,
-      benchCommon "IntMap" Data.List.ApplyMerge.IntMap.applyMerge,
-      benchCommon "IntSet" Data.List.ApplyMerge.IntSet.applyMerge,
+        ApplyMerge.DoublyLinkedList.applyMerge,
+      benchCommon "IntMap" ApplyMerge.IntMap.applyMerge,
+      benchCommon "IntSet" ApplyMerge.IntSet.applyMerge,
       Bench.Data.DoublyLinkedList.STRef.benchmarks,
       Bench.PriorityQueue.MinPQueue.benchmarks,
       Bench.PriorityQueue.MinPQueue.Mutable.benchmarks

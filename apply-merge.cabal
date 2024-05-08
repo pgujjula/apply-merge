@@ -36,7 +36,7 @@ library
   exposed-modules:
       Data.List.ApplyMerge
   other-modules:
-      Data.List.ApplyMerge.IntSet
+      ApplyMerge.IntSet
   hs-source-dirs:
       src
   ghc-options: -Wall -Wunused-packages
@@ -50,17 +50,17 @@ test-suite apply-merge-tests
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
+      ApplyMerge.DoublyLinkedList
+      ApplyMerge.IntMap
+      ApplyMerge.IntSet
       Data.DoublyLinkedList.STRef
       Data.List.ApplyMerge
-      Data.List.ApplyMerge.DoublyLinkedList
-      Data.List.ApplyMerge.IntMap
-      Data.List.ApplyMerge.IntSet
       Data.PQueue.Prio.Min.Mutable
+      Test.ApplyMerge.Common
+      Test.ApplyMerge.DoublyLinkedList
+      Test.ApplyMerge.IntMap
+      Test.ApplyMerge.IntSet
       Test.Data.DoublyLinkedList.STRef
-      Test.Data.List.ApplyMerge.Common
-      Test.Data.List.ApplyMerge.DoublyLinkedList
-      Test.Data.List.ApplyMerge.IntMap
-      Test.Data.List.ApplyMerge.IntSet
       Test.Data.PQueue.Prio.Min.Mutable
   hs-source-dirs:
       src
@@ -82,11 +82,11 @@ benchmark apply-merge-benchmarks
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
+      ApplyMerge.DoublyLinkedList
+      ApplyMerge.IntMap
+      ApplyMerge.IntSet
       Data.DoublyLinkedList.STRef
       Data.List.ApplyMerge
-      Data.List.ApplyMerge.DoublyLinkedList
-      Data.List.ApplyMerge.IntMap
-      Data.List.ApplyMerge.IntSet
       Data.PQueue.Prio.Min.Mutable
       Bench.Data.DoublyLinkedList.STRef
       Bench.PriorityQueue.MinPQueue

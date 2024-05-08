@@ -2,7 +2,7 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE Rank2Types #-}
 
-module Test.Data.List.ApplyMerge.Common
+module Test.ApplyMerge.Common
   ( basicTest,
     skewedTest,
     blockTest,

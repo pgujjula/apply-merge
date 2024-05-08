@@ -39,7 +39,7 @@ library:
   exposed-modules:
   - Data.List.ApplyMerge
   other-modules:
-  - Data.List.ApplyMerge.IntSet
+  - ApplyMerge.IntSet
   dependencies:
   - containers ^>= {0.6}
   - pqueue ^>= {1.4, 1.5}

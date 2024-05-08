@@ -1,12 +1,12 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
-module Test.Data.List.ApplyMerge.IntSet
+module Test.ApplyMerge.DoublyLinkedList
   ( tests,
   )
 where
 
-import Data.List.ApplyMerge.IntSet (applyMerge)
-import Test.Data.List.ApplyMerge.Common
+import ApplyMerge.DoublyLinkedList (applyMerge)
+import Test.ApplyMerge.Common
   ( basicTest,
     blockTest,
     maxTest,
@@ -17,7 +17,7 @@ import Test.Tasty (TestTree, testGroup)
 tests :: TestTree
 tests =
   testGroup
-    "Data.List.ApplyMerge.IntSet"
+    "Data.List.ApplyMerge.DoublyLinkedList"
     [ basicTest applyMerge,
       skewedTest applyMerge,
       blockTest applyMerge,

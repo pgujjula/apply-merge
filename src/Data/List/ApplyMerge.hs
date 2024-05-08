@@ -8,7 +8,7 @@
 -- Stability: experimental
 module Data.List.ApplyMerge (applyMerge) where
 
-import Data.List.ApplyMerge.IntSet qualified
+import ApplyMerge.IntSet qualified
 
 -- | If given a binary function @f@ that is non-decreasing in both arguments,
 --   and two (potentially infinite) ordered lists @xs@ and @ys@, then
@@ -28,4 +28,4 @@ import Data.List.ApplyMerge.IntSet qualified
 --   For more examples, see
 --   [README#examples](https://github.com/pgujjula/apply-merge/#examples).
 applyMerge :: (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
-applyMerge = Data.List.ApplyMerge.IntSet.applyMerge
+applyMerge = ApplyMerge.IntSet.applyMerge

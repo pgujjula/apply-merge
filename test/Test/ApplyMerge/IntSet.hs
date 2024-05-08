@@ -1,13 +1,12 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
-
-module Test.Data.List.ApplyMerge.IntMap
+module Test.ApplyMerge.IntSet
   ( tests,
   )
 where
 
-import Data.List.ApplyMerge.IntMap (applyMerge)
-import Test.Data.List.ApplyMerge.Common
+import ApplyMerge.IntSet (applyMerge)
+import Test.ApplyMerge.Common
   ( basicTest,
     blockTest,
     maxTest,
@@ -18,7 +17,7 @@ import Test.Tasty (TestTree, testGroup)
 tests :: TestTree
 tests =
   testGroup
-    "Data.List.ApplyMerge.IntMap"
+    "Data.List.ApplyMerge.IntSet"
     [ basicTest applyMerge,
       skewedTest applyMerge,
       blockTest applyMerge,

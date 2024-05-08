@@ -3,12 +3,12 @@
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE NoFieldSelectors #-}
 
-module Data.List.ApplyMerge.IntSet (applyMerge) where
+module ApplyMerge.IntMap (applyMerge) where
 
 import Control.Monad (guard)
 import Data.Function ((&))
-import Data.IntSet (IntSet)
-import Data.IntSet qualified as IntSet
+import Data.IntMap.Strict (IntMap)
+import Data.IntMap.Strict qualified as IntMap
 import Data.List (unfoldr)
 import Data.List.NonEmpty (NonEmpty, nonEmpty)
 import Data.List.NonEmpty qualified as NonEmpty
@@ -25,8 +25,7 @@ data Node a b c = Node
 
 data Frontier a b c = Frontier
   { queue :: MinPQueue c (Node a b c),
-    indexSetA :: IntSet,
-    indexSetB :: IntSet
+    indexMap :: IntMap Int
   }
 
 applyMerge :: (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
@@ -40,8 +39,7 @@ initialFrontier f as bs =
   let node = mkNode f (0, 0) as bs
    in Frontier
         { queue = MinPQueue.singleton node.value node,
-          indexSetA = IntSet.singleton 0,
-          indexSetB = IntSet.singleton 0
+          indexMap = IntMap.singleton 0 0
         }
 
 step :: (Ord c) => (a -> b -> c) -> Frontier a b c -> Maybe (c, Frontier a b c)
@@ -56,19 +54,19 @@ step f frontier = do
 deleteMinNode :: (Ord c) => Frontier a b c -> Maybe (Node a b c, Frontier a b c)
 deleteMinNode frontier = do
   (node, queue') <- MinPQueue.minView frontier.queue
-  let (ia, ib) = node.position
+  let (ia, _) = node.position
       frontier' =
         Frontier
           { queue = queue',
-            indexSetA = IntSet.delete ia frontier.indexSetA,
-            indexSetB = IntSet.delete ib frontier.indexSetB
+            indexMap = IntMap.delete ia frontier.indexMap
           }
   pure (node, frontier')
 
 insertChildA ::
   (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
 insertChildA f (Node (ia, ib) _ as bs) frontier = fromMaybe frontier $ do
-  guard (not (IntSet.member (ia + 1) frontier.indexSetA))
+  let iaNext = fmap fst . IntMap.lookupGT ia $ frontier.indexMap
+  guard $ iaNext /= Just (ia + 1)
   as' <- nonEmpty (NonEmpty.tail as)
   let childA = mkNode f (ia + 1, ib) as' bs
   pure $ insertNode childA frontier
@@ -76,7 +74,8 @@ insertChildA f (Node (ia, ib) _ as bs) frontier = fromMaybe frontier $ do
 insertChildB ::
   (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
 insertChildB f (Node (ia, ib) _ as bs) frontier = fromMaybe frontier $ do
-  guard (not (IntSet.member (ib + 1) frontier.indexSetB))
+  let ibNext = fmap snd . IntMap.lookupLT ia $ frontier.indexMap
+  guard $ ibNext /= Just (ib + 1)
   bs' <- nonEmpty (NonEmpty.tail bs)
   let childB = mkNode f (ia, ib + 1) as bs'
   pure $ insertNode childB frontier
@@ -86,8 +85,7 @@ insertNode node frontier =
   let (ia, ib) = node.position
    in Frontier
         { queue = MinPQueue.insert node.value node frontier.queue,
-          indexSetA = IntSet.insert ia frontier.indexSetA,
-          indexSetB = IntSet.insert ib frontier.indexSetB
+          indexMap = IntMap.insert ia ib frontier.indexMap
         }
 
 mkNode :: (a -> b -> c) -> (Int, Int) -> NonEmpty a -> NonEmpty b -> Node a b c
