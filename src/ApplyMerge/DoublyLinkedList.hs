@@ -5,7 +5,7 @@
 
 module ApplyMerge.DoublyLinkedList (applyMerge) where
 
-import Control.Monad (guard)
+import Control.Monad (guard, (>=>))
 import Control.Monad.ST qualified as Strict
 import Control.Monad.ST.Lazy qualified as Lazy
 import Control.Monad.Trans.Class (lift)
@@ -37,7 +37,7 @@ applyMergeNonEmpty ::
   (Ord c) => (a -> b -> c) -> NonEmpty a -> NonEmpty b -> [c]
 applyMergeNonEmpty f as bs = Lazy.runST $ do
   frontier <- Lazy.strictToLazyST (initialFrontier f as bs)
-  unfoldrM (Lazy.strictToLazyST . step f) frontier
+  unfoldrM (Lazy.strictToLazyST . runMaybeT . step f) frontier
 
 unfoldrM :: (Monad m) => (b -> m (Maybe (a, b))) -> b -> m [a]
 unfoldrM f seed = do
@@ -58,17 +58,12 @@ step ::
   (Ord c) =>
   (a -> b -> c) ->
   Frontier s a b c ->
-  Strict.ST s (Maybe (c, Frontier s a b c))
-step f frontier = runMaybeT $ do
-  (node, frontier') <- MaybeT (deleteMinNode frontier)
-  frontier'' <- lift $ insertChildA f node frontier'
-  frontier''' <- lift $ insertChildB f node frontier''
-  lift (DoublyLinked.delete node.position)
-  pure (node.value, frontier''')
+  MaybeT (Strict.ST s) (c, Frontier s a b c)
+step f = deleteMinNode >=> lift . uncurry (peekInsertChildren f)
 
 deleteMinNode ::
-  (Ord c) => Frontier s a b c -> Strict.ST s (Maybe (Node s a b c, Frontier s a b c))
-deleteMinNode frontier = runMaybeT $ do
+  (Ord c) => Frontier s a b c -> MaybeT (Strict.ST s) (Node s a b c, Frontier s a b c)
+deleteMinNode frontier = do
   (node, queue') <- hoistMaybe (MinPQueue.minView frontier.queue)
   let frontier' = Frontier queue'
   pure (node, frontier')
@@ -82,6 +77,22 @@ prevNodeValue :: DoublyLinked.DoublyLinkedNode s a -> Strict.ST s (Maybe a)
 prevNodeValue valueNode = runMaybeT $ do
   valueNode' <- MaybeT $ DoublyLinked.prev valueNode
   pure (DoublyLinked.value valueNode')
+
+-- Take a node not in the frontier but whose position is still in the position
+-- list, add its children to the frontier, and remove the node from the
+-- position list.
+peekInsertChildren ::
+  (Ord c) =>
+  (a -> b -> c) ->
+  Node s a b c ->
+  Frontier s a b c ->
+  Strict.ST s (c, Frontier s a b c)
+peekInsertChildren f node frontier = do
+  frontier' <-
+    insertChildA f node frontier
+      >>= insertChildB f node
+  DoublyLinked.delete node.position
+  pure (node.value, frontier')
 
 insertChildA ::
   (Ord c) =>
