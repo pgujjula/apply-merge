@@ -51,15 +51,8 @@ initialFrontier ::
 initialFrontier f as bs = do
   list <- DoublyLinked.empty
   position <- DoublyLinked.cons list (0 :: Int, 0 :: Int)
-  let c = f (NonEmpty.head as) (NonEmpty.head bs)
-      node =
-        Node
-          { position = position,
-            value = c,
-            as = as,
-            bs = bs
-          }
-  pure $ Frontier $ MinPQueue.singleton c node
+  let node = mkNode f position as bs
+  pure $ Frontier $ MinPQueue.singleton node.value node
 
 step ::
   (Ord c) =>
