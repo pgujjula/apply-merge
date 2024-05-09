@@ -11,7 +11,7 @@ import Control.Monad.ST.Lazy qualified as Lazy
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Maybe (MaybeT (..), runMaybeT)
 import Data.DoublyLinkedList.STRef qualified as DoublyLinked
-import Data.List.NonEmpty (NonEmpty, nonEmpty)
+import Data.List.NonEmpty (NonEmpty ((:|)), nonEmpty)
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Maybe (fromMaybe)
 import Data.PQueue.Prio.Min (MinPQueue)
@@ -29,15 +29,16 @@ newtype Frontier s a b c = Frontier
   }
 
 applyMerge :: (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
-applyMerge f as bs =
-  fromMaybe [] $
-    applyMergeNonEmpty f <$> nonEmpty as <*> nonEmpty bs
+applyMerge f as bs = fromMaybe [] $ do
+  as' <- nonEmpty as
+  bs' <- nonEmpty bs
+  pure (NonEmpty.toList (applyMergeNonEmpty f as' bs'))
 
 applyMergeNonEmpty ::
-  (Ord c) => (a -> b -> c) -> NonEmpty a -> NonEmpty b -> [c]
+  (Ord c) => (a -> b -> c) -> NonEmpty a -> NonEmpty b -> NonEmpty c
 applyMergeNonEmpty f as bs = Lazy.runST $ do
-  frontier <- Lazy.strictToLazyST (initialFrontier f as bs)
-  unfoldrM (Lazy.strictToLazyST . runMaybeT . step f) frontier
+  (c, frontier) <- Lazy.strictToLazyST (initialState f as bs)
+  (c :|) <$> unfoldrM (Lazy.strictToLazyST . runMaybeT . step f) frontier
 
 unfoldrM :: (Monad m) => (b -> m (Maybe (a, b))) -> b -> m [a]
 unfoldrM f seed = do
@@ -46,13 +47,18 @@ unfoldrM f seed = do
     Nothing -> pure []
     Just (x, newSeed) -> (x :) <$> unfoldrM f newSeed
 
-initialFrontier ::
-  (a -> b -> c) -> NonEmpty a -> NonEmpty b -> Strict.ST s (Frontier s a b c)
-initialFrontier f as bs = do
+initialState ::
+  (Ord c) =>
+  (a -> b -> c) ->
+  NonEmpty a ->
+  NonEmpty b ->
+  Strict.ST s (c, Frontier s a b c)
+initialState f as bs = do
   list <- DoublyLinked.empty
-  position <- DoublyLinked.cons list (0 :: Int, 0 :: Int)
-  let node = mkNode f position as bs
-  pure $ Frontier $ MinPQueue.singleton node.value node
+  rootPosition <- DoublyLinked.cons list (0 :: Int, 0 :: Int)
+  let rootNode = mkNode f rootPosition as bs
+  let emptyFrontier = Frontier MinPQueue.empty
+  peekInsertChildren f rootNode emptyFrontier
 
 step ::
   (Ord c) =>
