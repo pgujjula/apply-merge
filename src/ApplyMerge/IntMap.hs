@@ -3,7 +3,7 @@
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE NoFieldSelectors #-}
 
-module ApplyMerge.IntMap (applyMerge) where
+module ApplyMerge.IntMap (applyMerge, applyMergeNonEmpty) where
 
 import Control.Arrow ((>>>))
 import Control.Monad (guard)

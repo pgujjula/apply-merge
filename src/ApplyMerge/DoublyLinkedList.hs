@@ -3,7 +3,7 @@
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE NoFieldSelectors #-}
 
-module ApplyMerge.DoublyLinkedList (applyMerge) where
+module ApplyMerge.DoublyLinkedList (applyMerge, applyMergeNonEmpty) where
 
 import Control.Monad (guard, (>=>))
 import Control.Monad.ST qualified as Strict

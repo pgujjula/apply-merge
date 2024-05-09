@@ -35,6 +35,7 @@ source-repository head
 library
   exposed-modules:
       Data.List.ApplyMerge
+      Data.List.NonEmpty.ApplyMerge
   other-modules:
       ApplyMerge.IntSet
   hs-source-dirs:
@@ -55,6 +56,7 @@ test-suite apply-merge-tests
       ApplyMerge.IntSet
       Data.DoublyLinkedList.STRef
       Data.List.ApplyMerge
+      Data.List.NonEmpty.ApplyMerge
       Data.PQueue.Prio.Min.Mutable
       Test.ApplyMerge.Common
       Test.ApplyMerge.DoublyLinkedList
@@ -88,6 +90,7 @@ benchmark apply-merge-benchmarks
       ApplyMerge.IntSet
       Data.DoublyLinkedList.STRef
       Data.List.ApplyMerge
+      Data.List.NonEmpty.ApplyMerge
       Data.PQueue.Prio.Min.Mutable
       Bench.Data.DoublyLinkedList.STRef
       Bench.PriorityQueue.MinPQueue
