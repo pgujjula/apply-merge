@@ -26,7 +26,7 @@ an ordered list of all `f x y`, for each `x` in `xs` and `y` in `ys`.
 Producing $n$ elements of `applyMerge f xs ys` takes $O(n \log n)$ time and
 $O(\sqrt{n})$ auxiliary space, assuming that `f` and `compare` take $O(1)$ time.
 See
-[docs/ALGORITHM.md#note-about-memory-usage](docs/ALGORITHM.md#note-about-memory-usage)
+[docs/ALGORITHM.md#note-about-memory-usage](./apply-merge/blob/main/docs/ALGORITHM.md#note-about-memory-usage)
 for caveats.
 
 ## Examples
