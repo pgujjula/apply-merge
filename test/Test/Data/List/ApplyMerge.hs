@@ -9,7 +9,7 @@ import Control.Applicative (liftA2)
 #endif
 import Data.Complex (Complex ((:+)))
 import Data.List (sortOn)
-import Data.List.ApplyMerge (applyMergeOn)
+import Data.List.ApplyMerge (applyMergeBy, applyMergeOn)
 import Data.Ratio ((%))
 import Test.ApplyMerge.Common (basicTest, blockTest, maxTest, skewedTest)
 import Test.Tasty (TestTree, testGroup)
@@ -18,12 +18,22 @@ import Test.Tasty.HUnit (testCase, (@?=))
 tests :: TestTree
 tests =
   testGroup
-    "Data.List.ApplyMerge.applyMergeOn"
-    [ basicTest (applyMergeOn id),
-      skewedTest (applyMergeOn id),
-      blockTest (applyMergeOn id),
-      maxTest (applyMergeOn id),
-      gaussianIntegerTest
+    "Data.List.ApplyMerge"
+    [ testGroup
+        "applyMergeOn"
+        [ basicTest (applyMergeOn id),
+          skewedTest (applyMergeOn id),
+          blockTest (applyMergeOn id),
+          maxTest (applyMergeOn id),
+          gaussianIntegerTest
+        ],
+      testGroup
+        "applyMergeBy"
+        [ basicTest (applyMergeBy compare),
+          skewedTest (applyMergeBy compare),
+          blockTest (applyMergeBy compare),
+          maxTest (applyMergeBy compare)
+        ]
     ]
 
 gaussianIntegerTest :: TestTree
