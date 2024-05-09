@@ -10,7 +10,7 @@ import Control.Monad (guard)
 import Data.IntSet (IntSet)
 import Data.IntSet qualified as IntSet
 import Data.List (unfoldr)
-import Data.List.NonEmpty (NonEmpty, nonEmpty)
+import Data.List.NonEmpty (NonEmpty ((:|)), nonEmpty)
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Maybe (fromMaybe)
 import Data.PQueue.Prio.Min (MinPQueue)
@@ -33,16 +33,33 @@ applyMerge :: (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
 applyMerge f as bs = fromMaybe [] $ do
   as' <- nonEmpty as
   bs' <- nonEmpty bs
-  pure (unfoldr (step f) (initialFrontier f as' bs'))
+  pure (NonEmpty.toList (applyMergeNonEmpty f as' bs'))
 
-initialFrontier :: (a -> b -> c) -> NonEmpty a -> NonEmpty b -> Frontier a b c
-initialFrontier f as bs =
-  let node = mkNode f (0, 0) as bs
-   in Frontier
-        { queue = MinPQueue.singleton node.value node,
-          indexSetA = IntSet.singleton 0,
-          indexSetB = IntSet.singleton 0
-        }
+applyMergeNonEmpty ::
+  (Ord c) => (a -> b -> c) -> NonEmpty a -> NonEmpty b -> NonEmpty c
+applyMergeNonEmpty f as bs =
+  let (c, frontier) = initialState f as bs
+   in c :| unfoldr (step f) frontier
+
+initialState ::
+  forall a b c.
+  (Ord c) =>
+  (a -> b -> c) ->
+  NonEmpty a ->
+  NonEmpty b ->
+  (c, Frontier a b c)
+initialState f as bs =
+  let initialNode :: Node a b c
+      initialNode = mkNode f (0, 0) as bs
+
+      emptyFrontier :: Frontier a b c
+      emptyFrontier =
+        Frontier
+          { queue = MinPQueue.empty,
+            indexSetA = IntSet.empty,
+            indexSetB = IntSet.empty
+          }
+   in peekInsertChildren f initialNode emptyFrontier
 
 step :: (Ord c) => (a -> b -> c) -> Frontier a b c -> Maybe (c, Frontier a b c)
 step f = fmap (uncurry (peekInsertChildren f)) . deleteMinNode
