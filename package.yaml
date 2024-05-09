@@ -38,6 +38,7 @@ library:
   source-dirs: src
   exposed-modules:
   - Data.List.ApplyMerge
+  - Data.List.NonEmpty.ApplyMerge
   other-modules:
   - ApplyMerge.IntSet
   dependencies:
