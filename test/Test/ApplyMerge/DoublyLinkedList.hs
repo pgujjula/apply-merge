@@ -17,7 +17,7 @@ import Test.Tasty (TestTree, testGroup)
 tests :: TestTree
 tests =
   testGroup
-    "Data.List.ApplyMerge.DoublyLinkedList"
+    "ApplyMerge.DoublyLinkedList"
     [ basicTest applyMerge,
       skewedTest applyMerge,
       blockTest applyMerge,

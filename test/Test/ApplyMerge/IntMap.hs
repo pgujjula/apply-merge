@@ -18,7 +18,7 @@ import Test.Tasty (TestTree, testGroup)
 tests :: TestTree
 tests =
   testGroup
-    "Data.List.ApplyMerge.IntMap"
+    "ApplyMerge.IntMap"
     [ basicTest applyMerge,
       skewedTest applyMerge,
       blockTest applyMerge,
