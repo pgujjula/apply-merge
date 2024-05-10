@@ -26,6 +26,7 @@ extra-doc-files:
     README.md
     ChangeLog.md
     docs/ALGORITHM.md
+    docs/Benchmark.md
     LICENSES/BSD-3-Clause.txt
 
 source-repository head
@@ -98,6 +99,7 @@ benchmark apply-merge-benchmarks
       Data.List.ApplyMerge
       Data.List.NonEmpty.ApplyMerge
       Data.PQueue.Prio.Min.Mutable
+      Bench.ApplyMerge
       Bench.Data.DoublyLinkedList.STRef
       Bench.PriorityQueue.MinPQueue
       Bench.PriorityQueue.MinPQueue.Mutable

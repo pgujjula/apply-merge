@@ -7,6 +7,7 @@ import ApplyMerge.DoublyLinkedList qualified
 import ApplyMerge.IntMap qualified
 import ApplyMerge.IntSet qualified
 import ApplyMerge.MergeAll qualified
+import Bench.ApplyMerge qualified
 import Bench.Data.DoublyLinkedList.STRef qualified
 import Bench.PriorityQueue.MinPQueue qualified
 import Bench.PriorityQueue.MinPQueue.Mutable qualified
@@ -22,6 +23,7 @@ main =
       benchCommon "IntMap" ApplyMerge.IntMap.applyMerge,
       benchCommon "IntSet" ApplyMerge.IntSet.applyMerge,
       benchCommon "MergeAll" ApplyMerge.MergeAll.applyMerge,
+      Bench.ApplyMerge.benchmarks,
       Bench.Data.DoublyLinkedList.STRef.benchmarks,
       Bench.PriorityQueue.MinPQueue.benchmarks,
       Bench.PriorityQueue.MinPQueue.Mutable.benchmarks

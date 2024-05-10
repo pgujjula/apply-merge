@@ -23,6 +23,7 @@ extra-doc-files:
 - README.md
 - ChangeLog.md
 - docs/ALGORITHM.md
+- docs/Benchmark.md
 - LICENSES/BSD-3-Clause.txt
 
 language: GHC2021
