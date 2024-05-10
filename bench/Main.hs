@@ -3,49 +3,17 @@
 
 module Main (main) where
 
-import ApplyMerge.DoublyLinkedList qualified
-import ApplyMerge.IntMap qualified
-import ApplyMerge.IntSet qualified
-import ApplyMerge.MergeAll qualified
 import Bench.ApplyMerge qualified
 import Bench.Data.DoublyLinkedList.STRef qualified
 import Bench.PriorityQueue.MinPQueue qualified
 import Bench.PriorityQueue.MinPQueue.Mutable qualified
-import Data.Function ((&))
-import Test.Tasty.Bench (Benchmark, bench, bgroup, defaultMain, nf)
+import Test.Tasty.Bench (defaultMain)
 
 main :: IO ()
 main =
   defaultMain
-    [ benchCommon
-        "DoublyLinkedList"
-        ApplyMerge.DoublyLinkedList.applyMerge,
-      benchCommon "IntMap" ApplyMerge.IntMap.applyMerge,
-      benchCommon "IntSet" ApplyMerge.IntSet.applyMerge,
-      benchCommon "MergeAll" ApplyMerge.MergeAll.applyMerge,
-      Bench.ApplyMerge.benchmarks,
+    [ Bench.ApplyMerge.benchmarks,
       Bench.Data.DoublyLinkedList.STRef.benchmarks,
       Bench.PriorityQueue.MinPQueue.benchmarks,
       Bench.PriorityQueue.MinPQueue.Mutable.benchmarks
     ]
-
-benchCommon ::
-  String ->
-  (forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]) ->
-  Benchmark
-benchCommon name applyMerge =
-  bgroup name [benchmarkSymmetric]
-  where
-    benchmarkSymmetric :: Benchmark
-    benchmarkSymmetric =
-      bgroup "benchmarkSymmetric" (fmap mkBench [1 .. (6 :: Int)])
-      where
-        mkBench :: Int -> Benchmark
-        mkBench i = bench (show i) (nf collapse (10 ^ i))
-          where
-            collapse :: Int -> Int
-            collapse n =
-              let start = (n `quot` maxBound) + 1
-               in applyMerge (*) [start ..] [start ..]
-                    & take n
-                    & sum
