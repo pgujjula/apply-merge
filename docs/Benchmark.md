@@ -48,6 +48,27 @@ We benchmark the performance of the `applyMerge` implementations on different
       . * * * * * * * * * * * * * *
   </details>
 
+* Box: `applyMerge max [1..] [1..]`
+  <details>
+    <summary>Shape</summary>
+
+      . . . . . . . * * * * * * * *
+      . . . . . . . * * * * * * * *
+      . . . . . . . * * * * * * * *
+      . . . . . . . * * * * * * * *
+      . . . . . . . * * * * * * * *
+      . . . . . . . * * * * * * * *
+      . . . . . . . * * * * * * * *
+      * * * * * * * * * * * * * * *
+      * * * * * * * * * * * * * * *
+      * * * * * * * * * * * * * * *
+      * * * * * * * * * * * * * * *
+      * * * * * * * * * * * * * * *
+      * * * * * * * * * * * * * * *
+      * * * * * * * * * * * * * * *
+      * * * * * * * * * * * * * * *
+  </details>
+
 * Triangular `applyMerge (+) [1..] [1..]`
   <details>
       <summary>Shape</summary>

@@ -23,6 +23,9 @@ benchmarks =
         "double linear shape: applyMerge min [1..] [1..]"
         min,
       funcToBenchmark
+        "box shape: applyMerge max [1..] [1..]"
+        max,
+      funcToBenchmark
         "triangular shape: applyMerge (+) [1..] [1..]"
         (+),
       funcToBenchmark
