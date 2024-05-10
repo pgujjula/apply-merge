@@ -64,6 +64,7 @@ tests:
     main: Main.hs
     dependencies:
     - containers ^>= {0.6}
+    - data-ordlist ^>= {0.4}
     - pqueue ^>= {1.4, 1.5}
     - reflection ^>= {2.1}
     - tasty ^>= {1.4, 1.5}
@@ -81,6 +82,7 @@ benchmarks:
     main: Main.hs
     dependencies:
     - containers ^>= {0.6}
+    - data-ordlist ^>= {0.4}
     - pqueue ^>= {1.4, 1.5}
     - reflection ^>= {2.1}
     - tasty-bench ^>= {0.3}
