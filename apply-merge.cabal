@@ -55,6 +55,7 @@ test-suite apply-merge-tests
       ApplyMerge.DoublyLinkedList
       ApplyMerge.IntMap
       ApplyMerge.IntSet
+      ApplyMerge.MergeAll
       Data.DoublyLinkedList.STRef
       Data.List.ApplyMerge
       Data.List.NonEmpty.ApplyMerge
@@ -63,6 +64,7 @@ test-suite apply-merge-tests
       Test.ApplyMerge.DoublyLinkedList
       Test.ApplyMerge.IntMap
       Test.ApplyMerge.IntSet
+      Test.ApplyMerge.MergeAll
       Test.Data.DoublyLinkedList.STRef
       Test.Data.List.ApplyMerge
       Test.Data.PQueue.Prio.Min.Mutable
@@ -73,6 +75,7 @@ test-suite apply-merge-tests
   build-depends:
       base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20
     , containers ==0.6.*
+    , data-ordlist ==0.4.*
     , pqueue >=1.4 && <1.5 || >=1.5 && <1.6
     , reflection ==2.1.*
     , tasty >=1.4 && <1.5 || >=1.5 && <1.6
@@ -90,6 +93,7 @@ benchmark apply-merge-benchmarks
       ApplyMerge.DoublyLinkedList
       ApplyMerge.IntMap
       ApplyMerge.IntSet
+      ApplyMerge.MergeAll
       Data.DoublyLinkedList.STRef
       Data.List.ApplyMerge
       Data.List.NonEmpty.ApplyMerge
@@ -104,6 +108,7 @@ benchmark apply-merge-benchmarks
   build-depends:
       base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20
     , containers ==0.6.*
+    , data-ordlist ==0.4.*
     , pqueue >=1.4 && <1.5 || >=1.5 && <1.6
     , reflection ==2.1.*
     , tasty-bench ==0.3.*
