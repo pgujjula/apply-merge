@@ -5,7 +5,7 @@ cabal-version: 2.2
 -- see: https://github.com/sol/hpack
 
 name:           apply-merge
-version:        0.1.0.0
+version:        0.1.1.0
 synopsis:       Lift a binary, non-decreasing function onto ordered lists and order the output
 description:    Please see the README on GitHub at <https://github.com/pgujjula/apply-merge#readme>
 category:       Data
