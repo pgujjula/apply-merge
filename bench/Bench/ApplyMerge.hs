@@ -15,7 +15,7 @@ import Test.Tasty.Bench (Benchmark, bench, bgroup, nf)
 benchmarks :: Benchmark
 benchmarks =
   bgroup
-    "applyMerge"
+    "ApplyMerge"
     [ funcToBenchmark
         "linear shape: applyMerge const [1..] [1..]"
         const,
