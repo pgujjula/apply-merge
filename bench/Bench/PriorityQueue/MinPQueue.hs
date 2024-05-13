@@ -1,8 +1,12 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE CPP #-}
+
 module Bench.PriorityQueue.MinPQueue (benchmarks) where
 
+#if !MIN_VERSION_base(4,20,0)
 import Data.List (foldl')
+#endif
 import Data.PQueue.Prio.Min (deleteMin, fromAscList, getMin, insert)
 import Test.Tasty.Bench (Benchmark, bench, bgroup, nf)
 
