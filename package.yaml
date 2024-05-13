@@ -18,6 +18,7 @@ tested-with:
 - GHC == 9.4.8
 - GHC == 9.6.5
 - GHC == 9.8.2
+- GHC == 9.10.1
 
 extra-doc-files:
 - README.md
@@ -33,7 +34,7 @@ ghc-options:
 - -Wunused-packages
 
 dependencies:
-- base ^>= {4.16, 4.17, 4.18, 4.19}
+- base ^>= {4.16, 4.17, 4.18, 4.19, 4.20}
 
 library:
   source-dirs: src
@@ -43,7 +44,7 @@ library:
   other-modules:
   - ApplyMerge.IntSet
   dependencies:
-  - containers ^>= {0.6}
+  - containers ^>= {0.6, 0.7}
   - pqueue ^>= {1.4, 1.5}
   - reflection ^>= {2.1}
 
@@ -64,7 +65,7 @@ tests:
     - test
     main: Main.hs
     dependencies:
-    - containers ^>= {0.6}
+    - containers ^>= {0.6, 0.7}
     - data-ordlist ^>= {0.4}
     - pqueue ^>= {1.4, 1.5}
     - reflection ^>= {2.1}
@@ -82,7 +83,7 @@ benchmarks:
     - bench
     main: Main.hs
     dependencies:
-    - containers ^>= {0.6}
+    - containers ^>= {0.6, 0.7}
     - data-ordlist ^>= {0.4}
     - pqueue ^>= {1.4, 1.5}
     - reflection ^>= {2.1}
