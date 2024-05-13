@@ -59,6 +59,7 @@ jobs:
           --test-show-details=streaming
           --enable-benchmarks
           --ghc-options="-Werror -Wall"
+          --allow-newer
       - run: cabal update
       - run: cabal freeze
       - run: cabal build
