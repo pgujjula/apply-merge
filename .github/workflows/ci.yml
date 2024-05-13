@@ -61,6 +61,7 @@ jobs:
           --ghc-options="-Werror -Wall"
           --allow-newer
       - run: cabal update
+      - run: cabal outdated --exit-code
       - run: cabal freeze
       - run: cabal build
       - run: cabal test
