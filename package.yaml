@@ -3,6 +3,8 @@
 spec-version: 0.36.0
 name:         apply-merge
 version:      0.1.1.0
+verbatim:
+  x-revision: 1
 synopsis:     Lift a binary, non-decreasing function onto ordered lists and order the output
 description:  Please see the README on GitHub at <https://github.com/pgujjula/apply-merge#readme>
 category:     Data

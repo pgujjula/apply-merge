@@ -29,6 +29,7 @@ extra-doc-files:
     docs/ALGORITHM.md
     docs/Benchmark.md
     LICENSES/BSD-3-Clause.txt
+x-revision:     1
 
 source-repository head
   type: git
