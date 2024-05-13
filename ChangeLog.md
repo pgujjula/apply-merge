@@ -5,6 +5,13 @@ SPDX-License-Identifier: BSD-3-Clause
 
 # Changelog for apply-merge
 
+## 0.1.0.1 (Revision 1)
+
+### Changed
+* Allow GHC 9.10.
+* Allow containers-0.7.
+* CI configured to also test GHC 9.10.1.
+
 ## 0.1.0.1
 
 ### Added
