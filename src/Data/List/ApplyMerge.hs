@@ -7,12 +7,25 @@
 -- License: BSD-3-Clause
 -- Maintainer: Preetham Gujjula <libraries@mail.preetham.io>
 -- Stability: experimental
-module Data.List.ApplyMerge (applyMerge, applyMergeBy, applyMergeOn) where
+module Data.List.ApplyMerge
+  ( applyMerge,
+    applyMergeBy,
+    applyMergeOn,
+
+    -- * Ascii drawing
+    drawMergePattern,
+  )
+where
 
 import ApplyMerge.IntSet qualified
+import Data.Array (Array, (!))
+import Data.Array qualified as Array
+import Data.Function ((&))
 import Data.Proxy (Proxy (..))
 import Data.Reflection (Reifies, reflect, reify)
 import Data.Semigroup (Arg (..))
+import Data.Text (Text)
+import Data.Text qualified as Text
 
 -- | If given a binary function @f@ that is non-decreasing in both arguments,
 --   and two (potentially infinite) ordered lists @xs@ and @ys@, then
@@ -80,3 +93,71 @@ applyMergeOn p f as bs =
         let c = f a b
          in Arg (p c) c
    in map (\(Arg _ c) -> c) (applyMerge f' as bs)
+
+type ApplyMerge = forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
+
+-- | @drawMergePattern f as bs size n@ takes the parameters for an @applyMerge@
+--   and displays what the smallest @size@ x @size@ elements look like after @n@
+--   elements have been generated.
+--
+-- >>> import Data.Text.IO qualified as Text
+-- >>> Text.putStr (drawMergePattern (+) [1..] [1..] 10 50)
+-- . . . . . . . . . *
+-- . . . . . . . . * *
+-- . . . . . . . * * *
+-- . . . . . . * * * *
+-- . . . . . * * * * *
+-- . . . . . * * * * *
+-- . . . . * * * * * *
+-- . . . * * * * * * *
+-- . . * * * * * * * *
+-- . * * * * * * * * *
+drawMergePattern :: (Ord c) => (a -> b -> c) -> [a] -> [b] -> Int -> Int -> Text
+drawMergePattern = drawMergePatternWith applyMerge
+
+drawMergePatternWith ::
+  forall a b c.
+  (Ord c) =>
+  ApplyMerge ->
+  (a -> b -> c) ->
+  [a] ->
+  [b] ->
+  Int ->
+  Int ->
+  Text
+drawMergePatternWith applyMerge' f as bs size n =
+  let labeledAs :: [(a, Int)]
+      labeledAs = zip as [0 ..]
+
+      labeledBs :: [(b, Int)]
+      labeledBs = zip bs [0 ..]
+
+      f' :: (a, Int) -> (b, Int) -> (c, (Int, Int))
+      f' (a, x) (b, y) = (f a b, (x, y))
+
+      labeledCs :: [(c, (Int, Int))]
+      labeledCs = applyMerge' f' labeledAs labeledBs
+
+      markedIndices :: [(Int, Int)]
+      markedIndices =
+        labeledCs
+          & take n
+          & map snd
+          & filter (\(x, y) -> x < size && y < size)
+
+      markedArray :: Array (Int, Int) Bool
+      markedArray =
+        let r = ((0, 0), (size - 1, size - 1))
+         in Array.array ((0, 0), (size - 1, size - 1)) $
+              map (,False) (Array.range r)
+                ++ map (,True) markedIndices
+
+      mkRow :: Int -> Text
+      mkRow row =
+        Text.intersperse ' ' $
+          Text.pack $
+            flip map [0 .. size - 1] $ \i ->
+              if markedArray ! (row, i)
+                then '.'
+                else '*'
+   in Text.unlines (map mkRow [0 .. size - 1])

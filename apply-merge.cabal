@@ -44,10 +44,12 @@ library
       src
   ghc-options: -Wall -Wunused-packages
   build-depends:
-      base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20 || >=4.20 && <4.21
+      array ==0.5.*
+    , base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20 || >=4.20 && <4.21
     , containers >=0.6 && <0.7 || >=0.7 && <0.8
     , pqueue >=1.4 && <1.5 || >=1.5 && <1.6
     , reflection ==2.1.*
+    , text >=1.2 && <1.3 || >=2.0 && <2.1 || >=2.1 && <2.2
   default-language: GHC2021
 
 test-suite apply-merge-tests
@@ -75,7 +77,8 @@ test-suite apply-merge-tests
       test
   ghc-options: -Wall -Wunused-packages
   build-depends:
-      base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20 || >=4.20 && <4.21
+      array ==0.5.*
+    , base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20 || >=4.20 && <4.21
     , containers >=0.6 && <0.7 || >=0.7 && <0.8
     , data-ordlist ==0.4.*
     , pqueue >=1.4 && <1.5 || >=1.5 && <1.6
@@ -84,6 +87,7 @@ test-suite apply-merge-tests
     , tasty-expected-failure ==0.12.*
     , tasty-hunit ==0.10.*
     , tasty-quickcheck ==0.10.*
+    , text >=1.2 && <1.3 || >=2.0 && <2.1 || >=2.1 && <2.2
     , transformers >=0.5 && <0.6 || >=0.6 && <0.7
     , vector >=0.12 && <0.13 || >=0.13 && <0.14
   default-language: GHC2021
@@ -109,12 +113,14 @@ benchmark apply-merge-benchmarks
       bench
   ghc-options: -Wall -Wunused-packages
   build-depends:
-      base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20 || >=4.20 && <4.21
+      array ==0.5.*
+    , base >=4.16 && <4.17 || >=4.17 && <4.18 || >=4.18 && <4.19 || >=4.19 && <4.20 || >=4.20 && <4.21
     , containers >=0.6 && <0.7 || >=0.7 && <0.8
     , data-ordlist ==0.4.*
     , pqueue >=1.4 && <1.5 || >=1.5 && <1.6
     , reflection ==2.1.*
     , tasty-bench ==0.3.*
+    , text >=1.2 && <1.3 || >=2.0 && <2.1 || >=2.1 && <2.2
     , transformers >=0.5 && <0.6 || >=0.6 && <0.7
     , vector >=0.12 && <0.13 || >=0.13 && <0.14
   default-language: GHC2021
