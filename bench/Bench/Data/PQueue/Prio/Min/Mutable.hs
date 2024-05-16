@@ -1,13 +1,10 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
-{-# LANGUAGE CPP #-}
+module Bench.Data.PQueue.Prio.Min.Mutable (benchmarks) where
 
-module Bench.PriorityQueue.MinPQueue (benchmarks) where
-
-#if !MIN_VERSION_base(4,20,0)
-import Data.List (foldl')
-#endif
-import Data.PQueue.Prio.Min (deleteMin, fromAscList, getMin, insert)
+import Control.Monad (forM_)
+import Control.Monad.ST (runST)
+import Data.PQueue.Prio.Min.Mutable (deleteMin, fromAscList, insert)
 import Test.Tasty.Bench (Benchmark, bench, bgroup, nf)
 
 generate :: Int -> [Int]
@@ -25,14 +22,16 @@ insertDeleteBenchmark = bgroup "insert/delete" (map mkBench [1 .. 6])
             quantity
               ++ " inserts and deletes on a priority queue of size "
               ++ quantity
-       in bench message $ flip nf ((10 :: Int) ^ i) $ \n ->
-            let initialQueue = fromAscList (map (\x -> (x, x)) [1 .. n])
-                finalQueue =
-                  foldl'
-                    (\pq (x :: Int) -> deleteMin (insert x x pq))
-                    initialQueue
-                    (take n (generate n))
-             in getMin finalQueue
+       in bench message $ flip nf ((10 :: Int) ^ i) $ \n -> runST $ do
+            queue <- fromAscList (map (\x -> (x, x)) [1 .. n])
+            forM_ (take n (generate n)) $ \x -> do
+              insert x x queue
+              deleteMin queue
+
+            deleteMin queue
 
 benchmarks :: Benchmark
-benchmarks = bgroup "Bench.PriorityQueue.MinPQueue" [insertDeleteBenchmark]
+benchmarks =
+  bgroup
+    "Data.PQueue.Prio.Min.Mutable"
+    [insertDeleteBenchmark]
