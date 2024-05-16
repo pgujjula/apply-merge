@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright Preetham Gujjula
 # SPDX-License-Identifier: BSD-3-Clause
 
-resolver: lts-22.13
+resolver: lts-21.25
 
 packages:
 - .
