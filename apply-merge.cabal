@@ -106,8 +106,8 @@ benchmark apply-merge-benchmarks
       Data.PQueue.Prio.Min.Mutable
       Bench.ApplyMerge
       Bench.Data.DoublyLinkedList.STRef
-      Bench.PriorityQueue.MinPQueue
-      Bench.PriorityQueue.MinPQueue.Mutable
+      Bench.Data.PQueue.Prio.Min
+      Bench.Data.PQueue.Prio.Min.Mutable
   hs-source-dirs:
       src
       bench
