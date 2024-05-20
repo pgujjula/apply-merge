@@ -7,6 +7,8 @@
 -- License: BSD-3-Clause
 -- Maintainer: Preetham Gujjula <libraries@mail.preetham.io>
 -- Stability: experimental
+--
+-- Like "Data.List.ApplyMerge", but for 'NonEmpty' instead of lists.
 module Data.List.NonEmpty.ApplyMerge
   ( applyMerge,
     applyMergeBy,
