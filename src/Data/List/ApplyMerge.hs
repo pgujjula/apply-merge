@@ -7,8 +7,12 @@
 -- License: BSD-3-Clause
 -- Maintainer: Preetham Gujjula <libraries@mail.preetham.io>
 -- Stability: experimental
+--
+-- Lift a binary, non-decreasing function onto ordered lists and order the
+-- output.
 module Data.List.ApplyMerge
-  ( applyMerge,
+  ( -- * Functions
+    applyMerge,
     applyMergeBy,
     applyMergeOn,
 
