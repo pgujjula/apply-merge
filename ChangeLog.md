@@ -5,7 +5,7 @@ SPDX-License-Identifier: BSD-3-Clause
 
 # Changelog for apply-merge
 
-## 0.1.0.1
+## 0.1.1.0
 
 ### Added
 * Implementation of `applyMergeOn`
