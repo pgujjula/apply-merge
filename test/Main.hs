@@ -11,21 +11,22 @@ import Test.Data.DoublyLinkedList.STRef qualified (tests)
 import Test.Data.List.ApplyMerge qualified (tests)
 import Test.Data.List.ApplyMerge.New qualified (tests)
 import Test.Data.PQueue.Prio.Min.Mutable qualified (tests)
-import Test.Tasty (TestTree, defaultMain, testGroup)
+import Test.Tasty (TestTree, Timeout (Timeout), adjustOption, defaultMain, testGroup)
 
 main :: IO ()
 main = defaultMain tests
 
 tests :: TestTree
 tests =
-  testGroup
-    ""
-    [ Test.ApplyMerge.DoublyLinkedList.tests,
-      Test.ApplyMerge.IntMap.tests,
-      Test.ApplyMerge.IntSet.tests,
-      Test.ApplyMerge.MergeAll.tests,
-      Test.Data.List.ApplyMerge.tests,
-      Test.Data.List.ApplyMerge.New.tests,
-      Test.Data.DoublyLinkedList.STRef.tests,
-      Test.Data.PQueue.Prio.Min.Mutable.tests
-    ]
+  adjustOption (const (Timeout (10^(7 :: Int)) "10s")) $
+    testGroup
+      ""
+      [ Test.ApplyMerge.DoublyLinkedList.tests,
+        Test.ApplyMerge.IntMap.tests,
+        Test.ApplyMerge.IntSet.tests,
+        Test.ApplyMerge.MergeAll.tests,
+        Test.Data.List.ApplyMerge.tests,
+        Test.Data.List.ApplyMerge.New.tests,
+        Test.Data.DoublyLinkedList.STRef.tests,
+        Test.Data.PQueue.Prio.Min.Mutable.tests
+      ]
