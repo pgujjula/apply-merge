@@ -9,6 +9,8 @@
 -- Stability: experimental
 --
 -- Like "Data.List.ApplyMerge", but for 'NonEmpty' instead of lists.
+--
+-- @since 0.1.1.0
 module Data.List.NonEmpty.ApplyMerge
   ( applyMerge,
     applyMergeBy,
@@ -25,10 +27,14 @@ import Data.Semigroup (Arg (..))
 
 -- | Like 'Data.List.ApplyMerge.applyMerge', but operates on 'NonEmpty's instead
 --   of lists.
+--
+--   @since 0.1.1.0
 applyMerge :: (Ord c) => (a -> b -> c) -> NonEmpty a -> NonEmpty b -> NonEmpty c
 applyMerge = ApplyMerge.IntSet.applyMergeNonEmpty
 
 -- | Like 'applyMerge', but uses a custom comparison function.
+--
+--   @since 0.1.1.0
 applyMergeBy ::
   (c -> c -> Ordering) ->
   (a -> b -> c) ->
@@ -69,6 +75,8 @@ instance (Reifies s (a -> a -> Ordering)) => Ord (ReflectedOrd s a) where
 
 -- | Like 'applyMerge', but applies a custom projection function before
 --   performing comparisons.
+--
+--   @since 0.1.1.0
 applyMergeOn ::
   (Ord d) => (c -> d) -> (a -> b -> c) -> NonEmpty a -> NonEmpty b -> NonEmpty c
 applyMergeOn p f as bs =

@@ -10,6 +10,8 @@
 --
 -- Lift a binary, non-decreasing function onto ordered lists and order the
 -- output.
+--
+-- @since 0.1.0.0
 module Data.List.ApplyMerge
   ( -- * Functions
     applyMerge,
@@ -48,10 +50,14 @@ import Data.Text qualified as Text
 --
 --   For more examples, see
 --   [README#examples](https://github.com/pgujjula/apply-merge/#examples).
+--
+--   @since 0.1.0.0
 applyMerge :: (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
 applyMerge = ApplyMerge.IntSet.applyMerge
 
 -- | Like 'applyMerge', but uses a custom comparison function.
+--
+--   @since 0.1.1.0
 applyMergeBy :: (c -> c -> Ordering) -> (a -> b -> c) -> [a] -> [b] -> [c]
 applyMergeBy = applyMergeBy_
 
@@ -90,6 +96,8 @@ instance (Reifies s (a -> a -> Ordering)) => Ord (ReflectedOrd s a) where
 --   >
 --   > gaussianIntegers :: [GaussianInteger]      -- `GaussianInteger` from arithmoi
 --   > gaussianIntegers = applyMergeOn norm (:+) zs zs
+--
+--   @since 0.1.1.0
 applyMergeOn ::
   (Ord d) => (c -> d) -> (a -> b -> c) -> [a] -> [b] -> [c]
 applyMergeOn p f as bs =
@@ -116,6 +124,8 @@ type ApplyMerge = forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
 -- . . . * * * * * * *
 -- . . * * * * * * * *
 -- . * * * * * * * * *
+--
+--   @since 0.1.2.0
 drawMergePattern :: (Ord c) => (a -> b -> c) -> [a] -> [b] -> Int -> Int -> Text
 drawMergePattern = drawMergePatternWith applyMerge
 
