@@ -6,6 +6,7 @@ SPDX-License-Identifier: BSD-3-Clause
 # Changelog for apply-merge
 
 ## 0.1.1.0
+*May 11, 2024*
 
 ### Added
 * Implementation of `applyMergeOn`
@@ -23,6 +24,7 @@ SPDX-License-Identifier: BSD-3-Clause
 * CI configured to test GHC 9.2.8, 9.4.8, 9.6.5, 9.8.2.
 
 ## 0.1.0.0
+*April 12, 2024*
 
 ### Added
 * Implementation of `applyMerge`.
