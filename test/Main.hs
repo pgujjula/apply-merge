@@ -9,6 +9,7 @@ import Test.ApplyMerge.IntSet qualified (tests)
 import Test.ApplyMerge.MergeAll qualified (tests)
 import Test.Data.DoublyLinkedList.STRef qualified (tests)
 import Test.Data.List.ApplyMerge qualified (tests)
+import Test.Data.List.ApplyMerge.New qualified (tests)
 import Test.Data.PQueue.Prio.Min.Mutable qualified (tests)
 import Test.Tasty (TestTree, defaultMain, testGroup)
 
@@ -24,6 +25,7 @@ tests =
       Test.ApplyMerge.IntSet.tests,
       Test.ApplyMerge.MergeAll.tests,
       Test.Data.List.ApplyMerge.tests,
+      Test.Data.List.ApplyMerge.New.tests,
       Test.Data.DoublyLinkedList.STRef.tests,
       Test.Data.PQueue.Prio.Min.Mutable.tests
     ]
