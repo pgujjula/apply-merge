@@ -1,9 +1,14 @@
+-- SPDX-FileCopyrightText: Copyright Preetham Gujjula
+-- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE ImpredicativeTypes #-}
 {-# LANGUAGE ViewPatterns #-}
 
 module Test.Data.List.ApplyMerge.New (tests) where
 
+#if !MIN_VERSION_base(4,18,0)
 import Control.Applicative (liftA2)
+#endif
 import Control.Arrow ((>>>))
 import Data.Bifunctor (bimap, second)
 import Data.Function (on)
@@ -58,37 +63,36 @@ type ApplyMergeOn f = forall a b c d. (Ord d) => (c -> d) -> (a -> b -> c) -> f 
 
 type ApplyMergeBy f = forall a b c. (c -> c -> Ordering) -> (a -> b -> c) -> f a -> f b -> f c
 
-testNEApplyMerge :: ApplyMerge NonEmpty -> String -> String -> TestTree
-testNEApplyMerge am label funcLabel =
+testGenericApplyMerge :: TestFunctions f -> ApplyMerge f -> String -> String -> TestTree
+testGenericApplyMerge testGenericFunctions am label funcLabel =
   testGroup
     label
-    [ testNEFunctions
+    [ testGenericFunctions
         ("increasing " <> funcLabel <> ", increasing xs and ys")
         am
         increasingNaturalFuncs
         (+),
-      testNEFunctions
+      testGenericFunctions
         ("decreasing " <> funcLabel <> ", decreasing xs and ys")
         am
         decreasingIntegerFuncs
         (-)
     ]
 
+testNEApplyMerge :: ApplyMerge NonEmpty -> String -> String -> TestTree
+testNEApplyMerge = testGenericApplyMerge testNEFunctions
+
 testApplyMerge :: ApplyMerge [] -> String -> String -> TestTree
-testApplyMerge am label funcLabel =
-  testGroup
-    label
-    [ testFunctions
-        ("increasing " <> funcLabel <> ", increasing xs and ys")
-        am
-        increasingNaturalFuncs
-        (+),
-      testFunctions
-        ("decreasing " <> funcLabel <> ", decreasing xs and ys")
-        am
-        decreasingIntegerFuncs
-        (-)
-    ]
+testApplyMerge = testGenericApplyMerge testFunctions
+
+type TestFunctions f =
+  forall a.
+  (Show a, Integral a, QC.Arbitrary a) =>
+  String ->
+  ApplyMerge f ->
+  [(String, a -> a -> a)] ->
+  (a -> a -> a) ->
+  TestTree
 
 testNEFunctions ::
   forall a.
