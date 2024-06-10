@@ -1,3 +1,4 @@
+{-# LANGUAGE ImpredicativeTypes #-}
 {-# LANGUAGE ViewPatterns #-}
 
 module Test.Data.List.ApplyMerge.New (tests) where
@@ -23,41 +24,41 @@ tests :: TestTree
 tests =
   testGroup
     "Data.List.ApplyMerge.New"
-    [ testGroup
+    [ genericTestApplyMerge
         "List"
-        [ testApplyMerge applyMerge "applyMerge f xs ys" "f",
-          testGroup "applyMergeOn proj f xs ys" . List.singleton $
-            let applyMergeViaOn :: ApplyMerge
-                applyMergeViaOn f xs ys =
-                  map (uncurry f) (applyMergeOn (uncurry f) (,) xs ys)
-             in testApplyMerge applyMergeViaOn "f = (,)" "proj",
-          testGroup "applyMerge cmp f xs ys" . List.singleton $
-            testApplyMerge (applyMergeBy compare) "cmp = compare" "f"
-        ],
-      testGroup
+        testApplyMerge
+        (applyMerge, applyMergeOn, applyMergeBy),
+      genericTestApplyMerge
         "NonEmpty"
-        [ testNEApplyMerge NE.applyMerge "applyMerge f xs ys" "f",
-          testGroup "applyMergeOn proj f xs ys" . List.singleton $
-            let applyMergeViaOn :: NEApplyMerge
-                applyMergeViaOn f xs ys =
-                  NE.map (uncurry f) (NE.applyMergeOn (uncurry f) (,) xs ys)
-             in testNEApplyMerge applyMergeViaOn "f = (,)" "proj",
-          testGroup "applyMerge cmp f xs ys" . List.singleton $
-            testNEApplyMerge (NE.applyMergeBy compare) "cmp = compare" "f"
-        ]
+        testNEApplyMerge
+        (NE.applyMerge, NE.applyMergeOn, NE.applyMergeBy)
     ]
 
-type ApplyMerge = forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
+genericTestApplyMerge ::
+  (Functor f) =>
+  String ->
+  (ApplyMerge f -> String -> String -> TestTree) ->
+  (ApplyMerge f, ApplyMergeOn f, ApplyMergeBy f) ->
+  TestTree
+genericTestApplyMerge label testAm (am, amOn, amBy) =
+  testGroup
+    label
+    [ testAm am "applyMerge f xs ys" "f",
+      testGroup "applyMergeOn proj f xs ys" . List.singleton $
+        let applyMergeViaOn f xs ys =
+              fmap (uncurry f) (amOn (uncurry f) (,) xs ys)
+         in testAm applyMergeViaOn "f = (,)" "proj",
+      testGroup "applyMergeBy cmp f xs ys" . List.singleton $
+        testAm (amBy compare) "cmp = compare" "f"
+    ]
 
-type NEApplyMerge =
-  forall a b c.
-  (Ord c) =>
-  (a -> b -> c) ->
-  NonEmpty a ->
-  NonEmpty b ->
-  NonEmpty c
+type ApplyMerge f = forall a b c. (Ord c) => (a -> b -> c) -> f a -> f b -> f c
 
-testNEApplyMerge :: NEApplyMerge -> String -> String -> TestTree
+type ApplyMergeOn f = forall a b c d. (Ord d) => (c -> d) -> (a -> b -> c) -> f a -> f b -> f c
+
+type ApplyMergeBy f = forall a b c. (c -> c -> Ordering) -> (a -> b -> c) -> f a -> f b -> f c
+
+testNEApplyMerge :: ApplyMerge NonEmpty -> String -> String -> TestTree
 testNEApplyMerge am label funcLabel =
   testGroup
     label
@@ -73,7 +74,7 @@ testNEApplyMerge am label funcLabel =
         (-)
     ]
 
-testApplyMerge :: ApplyMerge -> String -> String -> TestTree
+testApplyMerge :: ApplyMerge [] -> String -> String -> TestTree
 testApplyMerge am label funcLabel =
   testGroup
     label
@@ -93,7 +94,7 @@ testNEFunctions ::
   forall a.
   (Show a, Integral a, QC.Arbitrary a) =>
   String ->
-  NEApplyMerge ->
+  ApplyMerge NonEmpty ->
   [(String, a -> a -> a)] ->
   (a -> a -> a) ->
   TestTree
@@ -101,30 +102,27 @@ testNEFunctions label am funcs op =
   QC.testProperty label $ do
     (fName, f) <- QC.elements funcs
     let limit = 100
-    let getOrderedList ::
+    let getOrderedNonEmpty ::
           ( QC.NonNegative a,
             Either [QC.NonNegative a] (QC.InfiniteList (QC.NonNegative a))
           ) ->
           NonEmpty a
-        getOrderedList =
+        getOrderedNonEmpty =
           second (either id getInfiniteList)
             >>> uncurry (:|)
             >>> NE.map QC.getNonNegative
             >>> NE.scanl1 op
     pure . QC.counterexample fName $
-      \(getOrderedList -> xs) (getOrderedList -> ys) ->
+      \(getOrderedNonEmpty -> xs) (getOrderedNonEmpty -> ys) ->
         let actual = am f xs ys
             expected = NE.sort $ on (liftA2 f) (take1 limit) xs ys
          in on (===) (NE.take limit) actual expected
-
-take1 :: Int -> NonEmpty a -> NonEmpty a
-take1 n (x :| xs) = x :| take n xs
 
 testFunctions ::
   forall a.
   (Show a, Integral a, QC.Arbitrary a) =>
   String ->
-  ApplyMerge ->
+  ApplyMerge [] ->
   [(String, a -> a -> a)] ->
   (a -> a -> a) ->
   TestTree
@@ -175,3 +173,7 @@ decreasingIntegerFuncs =
           )
         ]
    in xs ++ map (bimap ("flip " <>) flip) xs
+
+-- Utilities
+take1 :: Int -> NonEmpty a -> NonEmpty a
+take1 n (x :| xs) = x :| take n xs
