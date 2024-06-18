@@ -1,7 +1,9 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
+--
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE ImpredicativeTypes #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ViewPatterns #-}
 
 module Test.Data.List.ApplyMerge.New (tests) where
@@ -12,17 +14,30 @@ import Control.Applicative (liftA2)
 import Control.Arrow ((>>>))
 import Data.Bifunctor (bimap, second)
 import Data.Function (on)
+import Data.Kind (Type)
 import Data.List (sort)
 import Data.List qualified as List
 import Data.List.ApplyMerge (applyMerge, applyMergeBy, applyMergeOn)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.List.NonEmpty qualified as NE
+import Data.List.NonEmpty qualified as NonEmpty
 import Data.List.NonEmpty.ApplyMerge qualified as NE
+import GHC.Generics (Generic)
 import Numeric.Natural (Natural)
 import Test.QuickCheck.Instances.Natural ()
 import Test.QuickCheck.Instances.Text ()
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.QuickCheck (getInfiniteList, getNonNegative, (===))
+import Test.Tasty.QuickCheck
+  ( Arbitrary,
+    Gen,
+    InfiniteList,
+    NonNegative,
+    arbitrary,
+    genericShrink,
+    getInfiniteList,
+    getNonNegative,
+    (===),
+  )
 import Test.Tasty.QuickCheck qualified as QC
 
 tests :: TestTree
@@ -31,15 +46,16 @@ tests =
     "Data.List.ApplyMerge.New"
     [ genericTestApplyMerge
         "List"
-        testApplyMerge
+        testListApplyMerge
         (applyMerge, applyMergeOn, applyMergeBy),
       genericTestApplyMerge
         "NonEmpty"
-        testNEApplyMerge
+        testNonEmptyApplyMerge
         (NE.applyMerge, NE.applyMergeOn, NE.applyMergeBy)
     ]
 
 genericTestApplyMerge ::
+  forall f.
   (Functor f) =>
   String ->
   (ApplyMerge f -> String -> String -> TestTree) ->
@@ -50,20 +66,81 @@ genericTestApplyMerge label testAm (am, amOn, amBy) =
     label
     [ testAm am "applyMerge f xs ys" "f",
       testGroup "applyMergeOn proj f xs ys" . List.singleton $
-        let applyMergeViaOn f xs ys =
+        let applyMergeViaOn :: ApplyMerge f
+            applyMergeViaOn f xs ys =
               fmap (uncurry f) (amOn (uncurry f) (,) xs ys)
          in testAm applyMergeViaOn "f = (,)" "proj",
       testGroup "applyMergeBy cmp f xs ys" . List.singleton $
         testAm (amBy compare) "cmp = compare" "f"
     ]
 
-type ApplyMerge f = forall a b c. (Ord c) => (a -> b -> c) -> f a -> f b -> f c
+type ApplyMerge f =
+  forall a b c. (Ord c) => (a -> b -> c) -> f a -> f b -> f c
 
-type ApplyMergeOn f = forall a b c d. (Ord d) => (c -> d) -> (a -> b -> c) -> f a -> f b -> f c
+type ApplyMergeOn f =
+  forall a b c d. (Ord d) => (c -> d) -> (a -> b -> c) -> f a -> f b -> f c
 
-type ApplyMergeBy f = forall a b c. (c -> c -> Ordering) -> (a -> b -> c) -> f a -> f b -> f c
+type ApplyMergeBy f =
+  forall a b c. (c -> c -> Ordering) -> (a -> b -> c) -> f a -> f b -> f c
 
-testGenericApplyMerge :: TestFunctions f -> ApplyMerge f -> String -> String -> TestTree
+data family Ordered (f :: Type -> Type)
+
+data instance Ordered []
+  = OrderedList
+  { olOrigin :: Integer,
+    olSequence :: Either [Natural] (InfiniteList Natural)
+  }
+  deriving (Generic)
+
+instance Arbitrary (Ordered []) where
+  arbitrary = liftA2 OrderedList arbitrary arbitrary
+  shrink = genericShrink
+
+data instance Ordered NonEmpty
+  = OrderedNonEmpty
+  { onOrigin :: Integer,
+    onSequence :: (Natural, Either [Natural] (InfiniteList Natural))
+  }
+  deriving (Generic)
+
+instance Arbitrary (Ordered NonEmpty) where
+  arbitrary = liftA2 OrderedNonEmpty arbitrary arbitrary
+  shrink = genericShrink
+
+class (Functor f) => ApplyMergeable (f :: Type -> Type) where
+  getIncreasing :: Ordered f -> f Natural
+  getDecreasing :: Ordered f -> f Integer
+  toList :: f a -> [a]
+
+instance ApplyMergeable [] where
+  getIncreasing =
+    olSequence
+      >>> either id getInfiniteList
+      >>> scanl1 (+)
+
+  getDecreasing ol = 
+    let x0 = olOrigin ol
+        xs = map (negate . toInteger) (getIncreasing ol)
+     in map (+ x0) xs
+
+  toList = id
+
+instance ApplyMergeable NonEmpty where
+  getIncreasing =
+    onSequence
+      >>> second (either id getInfiniteList)
+      >>> uncurry (:|)
+      >>> NonEmpty.scanl1 (+)
+
+  getDecreasing one =
+    let x0 = onOrigin one
+        xs = fmap (negate . toInteger) (getIncreasing one)
+     in fmap (+ x0) xs
+
+  toList = NonEmpty.toList
+
+testGenericApplyMerge ::
+  TestFunctions f -> ApplyMerge f -> String -> String -> TestTree
 testGenericApplyMerge testGenericFunctions am label funcLabel =
   testGroup
     label
@@ -79,11 +156,11 @@ testGenericApplyMerge testGenericFunctions am label funcLabel =
         (-)
     ]
 
-testNEApplyMerge :: ApplyMerge NonEmpty -> String -> String -> TestTree
-testNEApplyMerge = testGenericApplyMerge testNEFunctions
+testNonEmptyApplyMerge :: ApplyMerge NonEmpty -> String -> String -> TestTree
+testNonEmptyApplyMerge = testGenericApplyMerge testNonEmptyFunctions
 
-testApplyMerge :: ApplyMerge [] -> String -> String -> TestTree
-testApplyMerge = testGenericApplyMerge testFunctions
+testListApplyMerge :: ApplyMerge [] -> String -> String -> TestTree
+testListApplyMerge = testGenericApplyMerge testListFunctions
 
 type TestFunctions f =
   forall a.
@@ -94,43 +171,22 @@ type TestFunctions f =
   (a -> a -> a) ->
   TestTree
 
-testNEFunctions ::
-  forall a.
-  (Show a, Integral a, QC.Arbitrary a) =>
-  String ->
-  ApplyMerge NonEmpty ->
-  [(String, a -> a -> a)] ->
-  (a -> a -> a) ->
-  TestTree
-testNEFunctions label am funcs op =
+testGenericFunctions :: (Arbitrary (Ordered f), Show (Ordered f)) => ApplyMergeable f => TestFunctions f
+testGenericFunctions label am _ _ =
   QC.testProperty label $ do
-    (fName, f) <- QC.elements funcs
+    (fName, f) <- QC.elements increasingNaturalFuncs
     let limit = 100
-    let getOrderedNonEmpty ::
-          ( QC.NonNegative a,
-            Either [QC.NonNegative a] (QC.InfiniteList (QC.NonNegative a))
-          ) ->
-          NonEmpty a
-        getOrderedNonEmpty =
-          second (either id getInfiniteList)
-            >>> uncurry (:|)
-            >>> NE.map QC.getNonNegative
-            >>> NE.scanl1 op
     pure . QC.counterexample fName $
-      \(getOrderedNonEmpty -> xs) (getOrderedNonEmpty -> ys) ->
-        let actual = am f xs ys
-            expected = NE.sort $ on (liftA2 f) (take1 limit) xs ys
-         in on (===) (NE.take limit) actual expected
+      \(getIncreasing -> xs) (getIncreasing -> ys) ->
+        let actual :: [Natural]
+            actual = toList (am f xs ys)
 
-testFunctions ::
-  forall a.
-  (Show a, Integral a, QC.Arbitrary a) =>
-  String ->
-  ApplyMerge [] ->
-  [(String, a -> a -> a)] ->
-  (a -> a -> a) ->
-  TestTree
-testFunctions label am funcs op =
+            expected :: [Natural]
+            expected = sort $ on (liftA2 f) (take limit) (toList xs) (toList ys)
+         in on (===) (take limit) actual expected
+          
+testListFunctions :: TestFunctions []
+testListFunctions label am funcs op =
   QC.testProperty label $ do
     (fName, f) <- QC.elements funcs
     let limit = 100
@@ -141,6 +197,22 @@ testFunctions label am funcs op =
         let actual = am f xs ys
             expected = sort $ on (liftA2 f) (take limit) xs ys
          in on (===) (take limit) actual expected
+
+testNonEmptyFunctions :: TestFunctions NonEmpty
+testNonEmptyFunctions label am funcs op =
+  QC.testProperty label $ do
+    (fName, f) <- QC.elements funcs
+    let limit = 100
+    let getOrderedNonEmpty =
+          second (either id getInfiniteList)
+            >>> uncurry (:|)
+            >>> NE.map QC.getNonNegative
+            >>> NE.scanl1 op
+    pure . QC.counterexample fName $
+      \(getOrderedNonEmpty -> xs) (getOrderedNonEmpty -> ys) ->
+        let actual = am f xs ys
+            expected = NE.sort $ on (liftA2 f) (take1 limit) xs ys
+         in on (===) (NE.take limit) actual expected
 
 increasingNaturalFuncs :: [(String, Natural -> Natural -> Natural)]
 increasingNaturalFuncs =
