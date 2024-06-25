@@ -5,6 +5,12 @@ SPDX-License-Identifier: BSD-3-Clause
 
 # Changelog for apply-merge
 
+## 0.1.1.0 (Revision 2)
+*June 25, 2024*
+
+### Changed
+* Allow tasty-quickcheck-0.11.
+
 ## 0.1.0.1 (Revision 1)
 
 ### Changed
