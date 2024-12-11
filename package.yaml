@@ -22,7 +22,7 @@ tested-with:
 
 extra-doc-files:
 - README.md
-- ChangeLog.md
+- CHANGELOG.md
 - docs/ALGORITHM.md
 - docs/Benchmark.md
 - LICENSES/BSD-3-Clause.txt
