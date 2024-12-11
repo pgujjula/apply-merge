@@ -6,7 +6,14 @@ SPDX-License-Identifier: BSD-3-Clause
 # Changelog for apply-merge
 
 ## 0.1.1.0
-*May 11, 2024*
+
+### Release History
+
+| Release         | Date       | Tag              |
+| --------------- | ---------- | ---------------- |
+| Initial Release | 2024-05-11 | [`0.1.1.0`]      |
+| Revision 1      | 2024-05-13 | [`0.1.1.0-rev1`] |
+| Revision 2      | 2024-06-25 | [`0.1.1.0-rev2`] |
 
 ### Added
 * Implementation of `applyMergeOn`
@@ -16,6 +23,7 @@ SPDX-License-Identifier: BSD-3-Clause
   ([#2](https://github.com/pgujjula/apply-merge/issues/2)).
 * Comprehensive benchmark suite for `applyMerge`
   ([#8](https://github.com/pgujjula/apply-merge/issues/8)).
+* Support for GHC 9.10 (beginning in Revision 1)
 
 ### Changed
 * Switched from falsify to QuickCheck in the test suite, allowing the
@@ -24,7 +32,14 @@ SPDX-License-Identifier: BSD-3-Clause
 * CI configured to test GHC 9.2.8, 9.4.8, 9.6.5, 9.8.2.
 
 ## 0.1.0.0
-*April 12, 2024*
+
+## Release History
+
+| Release             | Date       | Tag              |
+| ------------------- | ---------- | ---------------- |
+| Release Candidate 1 | 2024-04-05 | [`0.1.0.0-rc1`]  |
+| Release Candidate 2 | 2024-04-10 | [`0.1.0.0-rc2`]  |
+| Initial Release     | 2024-04-12 | [`0.1.0.0`]      |
 
 ### Added
 * Implementation of `applyMerge`.
@@ -36,3 +51,10 @@ SPDX-License-Identifier: BSD-3-Clause
 * Documentation of the library in `README.md` and `docs/ALGORITHM.md`, with
   feedback from _meeeow_ on Haskell Discourse
   ([link](https://discourse.haskell.org/t/apply-merge-lift-a-binary-increasing-function-onto-ordered-lists-and-produce-ordered-output/9269/4)).
+
+[`0.1.1.0-rev2`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.1.0-rev2
+[`0.1.1.0-rev1`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.1.0-rev1
+[`0.1.1.0`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.1.0
+[`0.1.0.0`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.0.0
+[`0.1.0.0-rc2`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.0.0-rc2
+[`0.1.0.0-rc1`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.0.0-rc1
