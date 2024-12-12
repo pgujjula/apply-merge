@@ -7,7 +7,6 @@ SPDX-License-Identifier: BSD-3-Clause
 
 [![Made in Haskell](https://img.shields.io/badge/Made_in-Haskell-5e5086?logo=haskell&style=flat)](https://haskell.org)
 [![CI](https://github.com/pgujjula/apply-merge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/pgujjula/apply-merge/actions/workflows/ci.yml?query=branch%3Amain)
-[![REUSE status](https://api.reuse.software/badge/github.com/pgujjula/apply-merge)](https://api.reuse.software/info/github.com/pgujjula/apply-merge)
 [![Hackage Version](https://img.shields.io/hackage/v/apply-merge?style=flat&color=blue)](https://hackage.haskell.org/package/apply-merge)
 [![Stackage Nightly Version](http://stackage.org/package/apply-merge/badge/nightly?color=blue)](https://www.stackage.org/nightly/package/apply-merge)
 [![Stackage LTS Version](http://stackage.org/package/apply-merge/badge/lts?color=blue)](https://www.stackage.org/lts/package/apply-merge)
@@ -83,6 +82,8 @@ See [docs/ALGORITHM.md](docs/ALGORITHM.md) for a full exposition of the
 `applyMerge` function and its implementation.
 
 ## Licensing
+
+[![REUSE status](https://api.reuse.software/badge/github.com/pgujjula/apply-merge)](https://api.reuse.software/info/github.com/pgujjula/apply-merge)
 
 This project licensed under BSD-3-Clause (except for `.gitignore`, which is
 under CC0-1.0), and follows [REUSE](https://reuse.software) licensing
