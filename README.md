@@ -5,6 +5,7 @@ SPDX-License-Identifier: BSD-3-Clause
 
 # apply-merge
 
+[![Made in Haskell](https://img.shields.io/badge/Made_in-Haskell-5e5086?logo=haskell&style=flat)](https://haskell.org)
 [![CI](https://github.com/pgujjula/apply-merge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/pgujjula/apply-merge/actions/workflows/ci.yml?query=branch%3Amain)
 [![REUSE status](https://api.reuse.software/badge/github.com/pgujjula/apply-merge)](https://api.reuse.software/info/github.com/pgujjula/apply-merge)
 [![Hackage Version](https://img.shields.io/hackage/v/apply-merge?style=flat&color=blue)](https://hackage.haskell.org/package/apply-merge)
