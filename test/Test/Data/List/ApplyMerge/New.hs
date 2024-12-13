@@ -16,10 +16,10 @@ import Data.Function (on)
 import Data.Kind (Type)
 import Data.List (sort)
 import qualified Data.List as List
-import Data.List.ApplyMerge (applyMerge, applyMergeBy, applyMergeOn)
+import qualified Data.List.ApplyMerge as List (applyMerge, applyMergeBy, applyMergeOn)
 import Data.List.NonEmpty (NonEmpty ((:|)))
-import qualified Data.List.NonEmpty as NE
-import qualified Data.List.NonEmpty.ApplyMerge as NE
+import qualified Data.List.NonEmpty as NonEmpty
+import qualified Data.List.NonEmpty.ApplyMerge as NonEmpty
 import Numeric.Natural (Natural)
 import Test.QuickCheck.Instances.Natural ()
 import Test.QuickCheck.Instances.Text ()
@@ -39,11 +39,11 @@ tests =
     [ genericTestApplyMerge
         "List"
         testListApplyMerge
-        (applyMerge, applyMergeOn, applyMergeBy),
+        (List.applyMerge, List.applyMergeOn, List.applyMergeBy),
       genericTestApplyMerge
         "NonEmpty"
         testNonEmptyApplyMerge
-        (NE.applyMerge, NE.applyMergeOn, NE.applyMergeBy)
+        (NonEmpty.applyMerge, NonEmpty.applyMergeOn, NonEmpty.applyMergeBy)
     ]
 
 genericTestApplyMerge ::
@@ -53,17 +53,17 @@ genericTestApplyMerge ::
   (ApplyMerge f -> String -> String -> TestTree) ->
   (ApplyMerge f, ApplyMergeOn f, ApplyMergeBy f) ->
   TestTree
-genericTestApplyMerge label testAm (am, amOn, amBy) =
+genericTestApplyMerge label testApplyMerge (applyMerge, applyMergeOn, applyMergeBy) =
   testGroup
     label
-    [ testAm am "applyMerge f xs ys" "f",
+    [ testApplyMerge applyMerge "applyMerge f xs ys" "f",
       testGroup "applyMergeOn proj f xs ys" . List.singleton $
         let applyMergeViaOn :: ApplyMerge f
             applyMergeViaOn f xs ys =
-              fmap (uncurry f) (amOn (uncurry f) (,) xs ys)
-         in testAm applyMergeViaOn "f = (,)" "proj",
+              fmap (uncurry f) (applyMergeOn (uncurry f) (,) xs ys)
+         in testApplyMerge applyMergeViaOn "f = (,)" "proj",
       testGroup "applyMergeBy cmp f xs ys" . List.singleton $
-        testAm (amBy compare) "cmp = compare" "f"
+        testApplyMerge (applyMergeBy compare) "cmp = compare" "f"
     ]
 
 type ApplyMerge f =
@@ -149,7 +149,7 @@ getOrderedList op = scanl1 op . map getNonNegative . getPossiblyInfinite
 getOrderedNonEmpty ::
   (a -> a -> a) -> PossiblyInfinite (NonEmpty (QC.NonNegative a)) -> NonEmpty a
 getOrderedNonEmpty op =
-  NE.scanl1 op . NE.map QC.getNonNegative . getPossiblyInfinite
+  NonEmpty.scanl1 op . NonEmpty.map QC.getNonNegative . getPossiblyInfinite
 
 testListFunctions :: TestFunctions []
 testListFunctions label am funcs op =
@@ -170,8 +170,8 @@ testNonEmptyFunctions label am funcs op =
     pure . QC.counterexample fName $
       \(getOrderedNonEmpty op -> xs) (getOrderedNonEmpty op -> ys) ->
         let actual = am f xs ys
-            expected = NE.sort $ on (liftA2 f) (take1 limit) xs ys
-         in on (===) (NE.take limit) actual expected
+            expected = NonEmpty.sort $ on (liftA2 f) (take1 limit) xs ys
+         in on (===) (NonEmpty.take limit) actual expected
 
 class HasPossiblyInfinite (a :: Type) where
   type PossiblyInfinite a :: Type
