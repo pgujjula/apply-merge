@@ -5,11 +5,11 @@ SPDX-License-Identifier: BSD-3-Clause
 
 # apply-merge
 
-![CI](https://github.com/pgujjula/apply-merge/actions/workflows/ci.yml/badge.svg?branch=main)
-![REUSE status](https://api.reuse.software/badge/github.com/pgujjula/apply-merge)
-![Hackage Version](https://img.shields.io/hackage/v/apply-merge?style=flat&color=blue)
-![Stackage Nightly Version](http://stackage.org/package/apply-merge/badge/nightly?color=blue)
-![Stackage LTS Version](http://stackage.org/package/apply-merge/badge/lts?color=blue)
+[![CI](https://github.com/pgujjula/apply-merge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/pgujjula/apply-merge/actions/workflows/ci.yml?query=branch%3Amain)
+[![REUSE status](https://api.reuse.software/badge/github.com/pgujjula/apply-merge)](https://api.reuse.software/info/github.com/pgujjula/apply-merge)
+[![Hackage Version](https://img.shields.io/hackage/v/apply-merge?style=flat&color=blue)](https://hackage.haskell.org/package/apply-merge)
+[![Stackage Nightly Version](http://stackage.org/package/apply-merge/badge/nightly?color=blue)](https://www.stackage.org/nightly/package/apply-merge)
+[![Stackage LTS Version](http://stackage.org/package/apply-merge/badge/lts?color=blue)](https://www.stackage.org/lts/package/apply-merge)
 
 Lift a binary, non-decreasing function onto ordered lists and order the output
 
