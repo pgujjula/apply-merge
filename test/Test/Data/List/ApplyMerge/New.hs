@@ -20,6 +20,7 @@ import qualified Data.List.ApplyMerge as List (applyMerge, applyMergeBy, applyMe
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NonEmpty
 import qualified Data.List.NonEmpty.ApplyMerge as NonEmpty
+import GHC.Exts (toList)
 import Numeric.Natural (Natural)
 import Test.QuickCheck.Instances.Natural ()
 import Test.QuickCheck.Instances.Text ()
@@ -158,8 +159,8 @@ testListFunctions label am funcs op =
     let limit = 100
     pure . QC.counterexample fName $
       \(getOrderedList op -> xs) (getOrderedList op -> ys) ->
-        let actual = am f xs ys
-            expected = sort $ on (liftA2 f) (take limit) xs ys
+        let actual = toList (am f xs ys)
+            expected = sort $ on (liftA2 f) (take limit . toList) xs ys
          in on (===) (take limit) actual expected
 
 testNonEmptyFunctions :: TestFunctions NonEmpty
@@ -169,9 +170,9 @@ testNonEmptyFunctions label am funcs op =
     let limit = 100
     pure . QC.counterexample fName $
       \(getOrderedNonEmpty op -> xs) (getOrderedNonEmpty op -> ys) ->
-        let actual = am f xs ys
-            expected = NonEmpty.sort $ on (liftA2 f) (take1 limit) xs ys
-         in on (===) (NonEmpty.take limit) actual expected
+        let actual = toList (am f xs ys)
+            expected = sort $ on (liftA2 f) (take limit . toList) xs ys
+         in on (===) (take limit) actual expected
 
 class HasPossiblyInfinite (a :: Type) where
   type PossiblyInfinite a :: Type
