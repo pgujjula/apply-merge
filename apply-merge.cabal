@@ -107,6 +107,7 @@ test-suite apply-merge-tests
     , containers >=0.6 && <0.7 || >=0.7 && <0.8
     , data-ordlist ==0.4.*
     , pqueue >=1.4 && <1.5 || >=1.5 && <1.6
+    , quickcheck-instances ==0.3.*
     , reflection ==2.1.*
     , tasty >=1.4 && <1.5 || >=1.5 && <1.6
     , tasty-expected-failure ==0.12.*

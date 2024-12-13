@@ -90,6 +90,7 @@ tests:
     - containers ^>= {0.6, 0.7}
     - data-ordlist ^>= {0.4}
     - pqueue ^>= {1.4, 1.5}
+    - quickcheck-instances ^>= {0.3}
     - reflection ^>= {2.1}
     - tasty ^>= {1.4, 1.5}
     - tasty-expected-failure ^>= {0.12}

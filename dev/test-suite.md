@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: Copyright Preetham Gujjula
+SPDX-License-Identifier: BSD-3-Clause
+-->
+
 # Test suite for applyMerge implementations
 
 ## Things to test
@@ -25,7 +30,7 @@
   * function is constant in one or both inputs, or only increasing
     sometimes
 * a variety of integer functions
-* finite and infinite lists
+* a variety of finite and infinite lists
 * texts, where the function is lexicographic merging
 * input is not ordered, but is ordered according to function
 
