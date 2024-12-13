@@ -20,7 +20,7 @@ import Data.List.ApplyMerge qualified as List (applyMerge, applyMergeBy, applyMe
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.List.NonEmpty.ApplyMerge qualified as NonEmpty
-import GHC.Exts (IsList, toList)
+import GHC.Exts (IsList, Item, toList)
 import Numeric.Natural (Natural)
 import Test.QuickCheck.Instances.Natural ()
 import Test.QuickCheck.Instances.Text ()
@@ -77,10 +77,10 @@ type ApplyMergeBy f =
   forall a b c. (c -> c -> Ordering) -> (a -> b -> c) -> f a -> f b -> f c
 
 testNonEmptyApplyMerge :: ApplyMerge NonEmpty -> String -> String -> TestTree
-testNonEmptyApplyMerge = testGenericApplyMerge testNonEmptyFunctions
+testNonEmptyApplyMerge = testGenericApplyMerge (gtest getOrderedNonEmpty)
 
 testListApplyMerge :: ApplyMerge [] -> String -> String -> TestTree
-testListApplyMerge = testGenericApplyMerge testListFunctions
+testListApplyMerge = testGenericApplyMerge (gtest getOrderedList)
 
 type TestFunctions f =
   forall a.
@@ -152,24 +152,28 @@ getOrderedNonEmpty ::
 getOrderedNonEmpty op =
   NonEmpty.scanl1 op . NonEmpty.map QC.getNonNegative . getPossiblyInfinite
 
-testListFunctions :: TestFunctions []
-testListFunctions label am funcs op =
+gtest ::
+  forall f a.
+  ( Show a,
+    Integral a,
+    QC.Arbitrary a,
+    IsList (f a),
+    Item (f a) ~ a,
+    QC.Arbitrary (PossiblyInfinite (f (QC.NonNegative a))),
+    Show (PossiblyInfinite (f (QC.NonNegative a)))
+  ) =>
+  ((a -> a -> a) -> PossiblyInfinite (f (QC.NonNegative a)) -> f a) ->
+  String ->
+  ApplyMerge f ->
+  [(String, a -> a -> a)] ->
+  (a -> a -> a) ->
+  TestTree
+gtest getOrderedF label am funcs op =
   QC.testProperty label $ do
     (fName, f) <- QC.elements funcs
     let limit = 100
     pure . QC.counterexample fName $
-      \(getOrderedList op -> xs) (getOrderedList op -> ys) ->
-        let actual = toList (am f xs ys)
-            expected = sort $ on (liftA2 f) (take limit . toList) xs ys
-         in on (===) (take limit) actual expected
-
-testNonEmptyFunctions :: TestFunctions NonEmpty
-testNonEmptyFunctions label am funcs op =
-  QC.testProperty label $ do
-    (fName, f) <- QC.elements funcs
-    let limit = 100
-    pure . QC.counterexample fName $
-      \(getOrderedNonEmpty op -> xs) (getOrderedNonEmpty op -> ys) ->
+      \(getOrderedF op -> xs) (getOrderedF op -> ys) ->
         let actual = toList (am f xs ys)
             expected = sort $ on (liftA2 f) (take limit . toList) xs ys
          in on (===) (take limit) actual expected
@@ -185,7 +189,3 @@ instance HasPossiblyInfinite [a] where
 instance HasPossiblyInfinite (NonEmpty a) where
   type PossiblyInfinite (NonEmpty a) = (a, PossiblyInfinite [a])
   getPossiblyInfinite (x, xs) = x :| getPossiblyInfinite xs
-
--- Utilities
-take1 :: Int -> NonEmpty a -> NonEmpty a
-take1 n (x :| xs) = x :| take n xs
