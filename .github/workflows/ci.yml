@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: haskell-actions/run-ormolu@v15
+      - uses: haskell-actions/run-ormolu@v16
   cabal_test:
     name: cabal test - ghc-${{ matrix.ghc }}
     needs: generate-matrix
