@@ -1,7 +1,14 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE ImpredicativeTypes #-}
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE QuantifiedConstraints #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE StandaloneKindSignatures #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
@@ -13,22 +20,21 @@ import Control.Applicative (liftA2)
 #endif
 import Data.Bifunctor (bimap)
 import Data.Function (on)
-import Data.Kind (Type)
+import Data.Kind (Constraint, Type)
 import Data.List (sort)
 import qualified Data.List as List
 import qualified Data.List.ApplyMerge as List (applyMerge, applyMergeBy, applyMergeOn)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NonEmpty
 import qualified Data.List.NonEmpty.ApplyMerge as NonEmpty
-import GHC.Exts (toList)
 import Numeric.Natural (Natural)
+import Test.QuickCheck.Instances ()
 import Test.QuickCheck.Instances.Natural ()
 import Test.QuickCheck.Instances.Text ()
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.QuickCheck
   ( InfiniteList,
     getInfiniteList,
-    getNonNegative,
     (===),
   )
 import qualified Test.Tasty.QuickCheck as QC
@@ -39,32 +45,29 @@ tests =
     "Data.List.ApplyMerge.New"
     [ genericTestApplyMerge
         "List"
-        testListApplyMerge
         (List.applyMerge, List.applyMergeOn, List.applyMergeBy),
       genericTestApplyMerge
         "NonEmpty"
-        testNonEmptyApplyMerge
         (NonEmpty.applyMerge, NonEmpty.applyMergeOn, NonEmpty.applyMergeBy)
     ]
 
 genericTestApplyMerge ::
   forall f.
-  (Functor f) =>
+  (Functor f, ApplyMergeTestable f) =>
   String ->
-  (ApplyMerge f -> String -> String -> TestTree) ->
   (ApplyMerge f, ApplyMergeOn f, ApplyMergeBy f) ->
   TestTree
-genericTestApplyMerge label testApplyMerge (applyMerge, applyMergeOn, applyMergeBy) =
+genericTestApplyMerge label (applyMerge, applyMergeOn, applyMergeBy) =
   testGroup
     label
-    [ testApplyMerge applyMerge "applyMerge f xs ys" "f",
+    [ testGenericApplyMerge applyMerge "applyMerge f xs ys" "f",
       testGroup "applyMergeOn proj f xs ys" . List.singleton $
         let applyMergeViaOn :: ApplyMerge f
             applyMergeViaOn f xs ys =
               fmap (uncurry f) (applyMergeOn (uncurry f) (,) xs ys)
-         in testApplyMerge applyMergeViaOn "f = (,)" "proj",
+         in testGenericApplyMerge applyMergeViaOn "f = (,)" "proj",
       testGroup "applyMergeBy cmp f xs ys" . List.singleton $
-        testApplyMerge (applyMergeBy compare) "cmp = compare" "f"
+        testGenericApplyMerge (applyMergeBy compare) "cmp = compare" "f"
     ]
 
 type ApplyMerge f =
@@ -76,12 +79,6 @@ type ApplyMergeOn f =
 type ApplyMergeBy f =
   forall a b c. (c -> c -> Ordering) -> (a -> b -> c) -> f a -> f b -> f c
 
-testNonEmptyApplyMerge :: ApplyMerge NonEmpty -> String -> String -> TestTree
-testNonEmptyApplyMerge = testGenericApplyMerge testNonEmptyFunctions
-
-testListApplyMerge :: ApplyMerge [] -> String -> String -> TestTree
-testListApplyMerge = testGenericApplyMerge testListFunctions
-
 type TestFunctions f =
   forall a.
   (Show a, Integral a, QC.Arbitrary a) =>
@@ -91,17 +88,32 @@ type TestFunctions f =
   (a -> a -> a) ->
   TestTree
 
+gtest :: (ApplyMergeTestable f) => TestFunctions f
+gtest label am funcs op =
+  QC.testProperty label $ do
+    (fName, f) <- QC.elements funcs
+    let limit = 100
+    pure . QC.counterexample fName $
+      \(getOrderedPossiblyInfinite op -> xs) (getOrderedPossiblyInfinite op -> ys) ->
+        let actual = gToList (am f xs ys)
+            expected = sort $ on (liftA2 f) (take limit . gToList) xs ys
+         in on (===) (take limit) actual expected
+
 testGenericApplyMerge ::
-  TestFunctions f -> ApplyMerge f -> String -> String -> TestTree
-testGenericApplyMerge testGenericFunctions am label funcLabel =
+  (ApplyMergeTestable f) =>
+  ApplyMerge f ->
+  String ->
+  String ->
+  TestTree
+testGenericApplyMerge am label funcLabel =
   testGroup
     label
-    [ testGenericFunctions
+    [ gtest
         ("increasing " <> funcLabel <> ", increasing xs and ys")
         am
         increasingNaturalFuncs
         (+),
-      testGenericFunctions
+      gtest
         ("decreasing " <> funcLabel <> ", decreasing xs and ys")
         am
         decreasingIntegerFuncs
@@ -144,35 +156,13 @@ decreasingIntegerFuncs =
         ]
    in xs ++ map (bimap ("flip " <>) flip) xs
 
-getOrderedList :: (a -> a -> a) -> PossiblyInfinite [QC.NonNegative a] -> [a]
-getOrderedList op = scanl1 op . map getNonNegative . getPossiblyInfinite
-
-getOrderedNonEmpty ::
-  (a -> a -> a) -> PossiblyInfinite (NonEmpty (QC.NonNegative a)) -> NonEmpty a
-getOrderedNonEmpty op =
-  NonEmpty.scanl1 op . NonEmpty.map QC.getNonNegative . getPossiblyInfinite
-
-testListFunctions :: TestFunctions []
-testListFunctions label am funcs op =
-  QC.testProperty label $ do
-    (fName, f) <- QC.elements funcs
-    let limit = 100
-    pure . QC.counterexample fName $
-      \(getOrderedList op -> xs) (getOrderedList op -> ys) ->
-        let actual = toList (am f xs ys)
-            expected = sort $ on (liftA2 f) (take limit . toList) xs ys
-         in on (===) (take limit) actual expected
-
-testNonEmptyFunctions :: TestFunctions NonEmpty
-testNonEmptyFunctions label am funcs op =
-  QC.testProperty label $ do
-    (fName, f) <- QC.elements funcs
-    let limit = 100
-    pure . QC.counterexample fName $
-      \(getOrderedNonEmpty op -> xs) (getOrderedNonEmpty op -> ys) ->
-        let actual = toList (am f xs ys)
-            expected = sort $ on (liftA2 f) (take limit . toList) xs ys
-         in on (===) (take limit) actual expected
+getOrderedPossiblyInfinite ::
+  (HasInfinite1 f) =>
+  (a -> a -> a) ->
+  PossiblyInfinite1 f (QC.NonNegative a) ->
+  f a
+getOrderedPossiblyInfinite op =
+  gscanl1 op . fmap QC.getNonNegative . getPossiblyInfinite1
 
 class HasPossiblyInfinite (a :: Type) where
   type PossiblyInfinite a :: Type
@@ -187,5 +177,47 @@ instance HasPossiblyInfinite (NonEmpty a) where
   getPossiblyInfinite (x, xs) = x :| getPossiblyInfinite xs
 
 -- Utilities
-take1 :: Int -> NonEmpty a -> NonEmpty a
-take1 n (x :| xs) = x :| take n xs
+data Infinite1 f a where
+  InfiniteList1 :: InfiniteList a -> Infinite1 [] a
+  InfiniteNonEmpty1 :: a -> InfiniteList a -> Infinite1 NonEmpty a
+
+deriving instance (Show a) => Show (Infinite1 f a)
+
+type Showable :: (Type -> Type) -> Constraint
+type Showable f = forall a. (Show a) => Show (f a)
+
+type Arbitrarible :: (Type -> Type) -> Constraint
+type Arbitrarible f = forall a. (QC.Arbitrary a) => QC.Arbitrary (f a)
+
+type ApplyMergeTestable f = (HasInfinite1 f, Showable f, Arbitrarible f)
+
+class (Functor f, QC.Arbitrary1 f) => HasInfinite1 f where
+  infiniteArbitrary :: (QC.Arbitrary a) => QC.Gen (Infinite1 f a)
+  gscanl1 :: (a -> a -> a) -> f a -> f a
+  gToList :: f a -> [a]
+
+instance HasInfinite1 [] where
+  infiniteArbitrary = InfiniteList1 <$> QC.arbitrary
+  gscanl1 = scanl1
+  gToList = id
+
+instance HasInfinite1 NonEmpty where
+  infiniteArbitrary = liftA2 InfiniteNonEmpty1 QC.arbitrary QC.arbitrary
+  gscanl1 = NonEmpty.scanl1
+  gToList = NonEmpty.toList
+
+type PossiblyInfinite1 f a = Either (f a) (Infinite1 f a)
+
+instance (QC.Arbitrary a, HasInfinite1 f) => QC.Arbitrary (Infinite1 f a) where
+  arbitrary :: QC.Gen (Infinite1 f a)
+  arbitrary = infiniteArbitrary
+
+getPossiblyInfinite1 :: PossiblyInfinite1 f a -> f a
+getPossiblyInfinite1 = \case
+  Left xs -> xs
+  Right xs -> getInfinite1 xs
+
+getInfinite1 :: Infinite1 f a -> f a
+getInfinite1 = \case
+  InfiniteList1 xs -> getInfiniteList xs
+  InfiniteNonEmpty1 x xs -> x :| getInfiniteList xs
