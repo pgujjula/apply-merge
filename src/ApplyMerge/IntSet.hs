@@ -1,7 +1,5 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
-{-# LANGUAGE OverloadedRecordDot #-}
-{-# LANGUAGE NoFieldSelectors #-}
 
 module ApplyMerge.IntSet (applyMerge, applyMergeNonEmpty) where
 
@@ -66,13 +64,13 @@ step f = fmap (uncurry (peekInsertChildren f)) . deleteMinNode
 
 deleteMinNode :: (Ord c) => Frontier a b c -> Maybe (Node a b c, Frontier a b c)
 deleteMinNode frontier = do
-  (node, queue') <- MinPQueue.minView frontier.queue
-  let (ia, ib) = node.position
+  (node, queue') <- MinPQueue.minView (queue frontier)
+  let (ia, ib) = position node
       frontier' =
         Frontier
           { queue = queue',
-            indexSetA = IntSet.delete ia frontier.indexSetA,
-            indexSetB = IntSet.delete ib frontier.indexSetB
+            indexSetA = IntSet.delete ia (indexSetA frontier),
+            indexSetB = IntSet.delete ib (indexSetB frontier)
           }
   pure (node, frontier')
 
@@ -85,12 +83,12 @@ peekInsertChildren ::
 peekInsertChildren f node =
   insertChildA f node
     >>> insertChildB f node
-    >>> (node.value,)
+    >>> (value node,)
 
 insertChildA ::
   (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
 insertChildA f (Node (ia, ib) _ as bs) frontier = fromMaybe frontier $ do
-  guard (not (IntSet.member (ia + 1) frontier.indexSetA))
+  guard (not (IntSet.member (ia + 1) (indexSetA frontier)))
   as' <- nonEmpty (NonEmpty.tail as)
   let childA = mkNode f (ia + 1, ib) as' bs
   pure $ insertNode childA frontier
@@ -98,18 +96,18 @@ insertChildA f (Node (ia, ib) _ as bs) frontier = fromMaybe frontier $ do
 insertChildB ::
   (Ord c) => (a -> b -> c) -> Node a b c -> Frontier a b c -> Frontier a b c
 insertChildB f (Node (ia, ib) _ as bs) frontier = fromMaybe frontier $ do
-  guard (not (IntSet.member (ib + 1) frontier.indexSetB))
+  guard (not (IntSet.member (ib + 1) (indexSetB frontier)))
   bs' <- nonEmpty (NonEmpty.tail bs)
   let childB = mkNode f (ia, ib + 1) as bs'
   pure $ insertNode childB frontier
 
 insertNode :: (Ord c) => Node a b c -> Frontier a b c -> Frontier a b c
 insertNode node frontier =
-  let (ia, ib) = node.position
+  let (ia, ib) = position node
    in Frontier
-        { queue = MinPQueue.insert node.value node frontier.queue,
-          indexSetA = IntSet.insert ia frontier.indexSetA,
-          indexSetB = IntSet.insert ib frontier.indexSetB
+        { queue = MinPQueue.insert (value node) node (queue frontier),
+          indexSetA = IntSet.insert ia (indexSetA frontier),
+          indexSetB = IntSet.insert ib (indexSetB frontier)
         }
 
 mkNode :: (a -> b -> c) -> (Int, Int) -> NonEmpty a -> NonEmpty b -> Node a b c

@@ -2,7 +2,6 @@
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE OverloadedRecordDot #-}
 
 module Data.DoublyLinkedList.STRef
   ( -- * Types
@@ -98,9 +97,9 @@ instance HasNext FirstNode where
   {-# INLINE toPrev1 #-}
 
 instance HasNext DoublyLinkedNode where
-  next1 valueNode = readSTRef valueNode.dlnNextRef
+  next1 valueNode = readSTRef (dlnNextRef valueNode)
   {-# INLINE next1 #-}
-  setNext1 valueNode nextNode = writeSTRef valueNode.dlnNextRef (toNext1 nextNode)
+  setNext1 valueNode nextNode = writeSTRef (dlnNextRef valueNode) (toNext1 nextNode)
   {-# INLINE setNext1 #-}
   toPrev1 = PrevNode . Right
   {-# INLINE toPrev1 #-}
@@ -128,9 +127,9 @@ class HasPrev node where
   {-# MINIMAL #-}
 
 instance HasPrev DoublyLinkedNode where
-  prev1 valueNode = readSTRef valueNode.dlnPrevRef
+  prev1 valueNode = readSTRef (dlnPrevRef valueNode)
   {-# INLINE prev1 #-}
-  setPrev1 valueNode prevNode = writeSTRef valueNode.dlnPrevRef (toPrev1 prevNode)
+  setPrev1 valueNode prevNode = writeSTRef (dlnPrevRef valueNode) (toPrev1 prevNode)
   {-# INLINE setPrev1 #-}
   toNext1 = NextNode . Left
   {-# INLINE toNext1 #-}
@@ -154,7 +153,7 @@ instance HasPrev NextNode where
 
 null :: DoublyLinkedList s a -> ST s Bool
 null list = do
-  nextNode <- readSTRef list.firstNode.fnNextRef
+  nextNode <- readSTRef (fnNextRef (firstNode list))
   case nextNode of
     NextNode (Left _) -> pure False
     _ -> pure True
@@ -166,26 +165,26 @@ value = _value
 
 head :: DoublyLinkedList s a -> ST s (Maybe (DoublyLinkedNode s a))
 head list =
-  readSTRef list.firstNode.fnNextRef >>= \case
+  readSTRef (fnNextRef (firstNode list)) >>= \case
     NextNode (Left doublyLinkedNode) -> pure (Just doublyLinkedNode)
     _ -> pure Nothing
 
 last :: DoublyLinkedList s a -> ST s (Maybe (DoublyLinkedNode s a))
 last list =
-  readSTRef list.lastNode.lnPrevRef >>= \case
+  readSTRef (lnPrevRef (lastNode list)) >>= \case
     PrevNode (Right doublyLinkedNode) -> pure (Just doublyLinkedNode)
     _ -> pure Nothing
 
 next :: DoublyLinkedNode s a -> ST s (Maybe (DoublyLinkedNode s a))
 next valueNode = do
-  nextNode <- readSTRef valueNode.dlnNextRef
+  nextNode <- readSTRef (dlnNextRef valueNode)
   pure $ case nextNode of
     NextNode (Left valueNode') -> Just valueNode'
     _ -> Nothing
 
 prev :: DoublyLinkedNode s a -> ST s (Maybe (DoublyLinkedNode s a))
 prev valueNode = do
-  prevNode <- readSTRef valueNode.dlnPrevRef
+  prevNode <- readSTRef (dlnPrevRef valueNode)
   pure $ case prevNode of
     PrevNode (Right valueNode') -> Just valueNode'
     _ -> Nothing
@@ -194,8 +193,8 @@ empty :: ST s (DoublyLinkedList s a)
 empty = do
   firstNode <- FirstNode <$> newSTRef undefined
   lastNode <- LastNode <$> newSTRef undefined
-  writeSTRef firstNode.fnNextRef (NextNode (Right lastNode))
-  writeSTRef lastNode.lnPrevRef (PrevNode (Left firstNode))
+  writeSTRef (fnNextRef firstNode) (NextNode (Right lastNode))
+  writeSTRef (lnPrevRef lastNode) (PrevNode (Left firstNode))
   pure (DoublyLinkedList firstNode lastNode)
 
 insertAfter1 :: (HasNext node) => node s a -> a -> ST s (DoublyLinkedNode s a)
@@ -221,11 +220,11 @@ insertAfter :: DoublyLinkedNode s a -> a -> ST s (DoublyLinkedNode s a)
 insertAfter = insertAfter1
 
 cons :: DoublyLinkedList s a -> a -> ST s (DoublyLinkedNode s a)
-cons list = insertAfter1 list.firstNode
+cons list = insertAfter1 (firstNode list)
 {-# INLINE cons #-}
 
 snoc :: DoublyLinkedList s a -> a -> ST s (DoublyLinkedNode s a)
-snoc list = insertBefore1 list.lastNode
+snoc list = insertBefore1 (lastNode list)
 {-# INLINE snoc #-}
 
 delete :: DoublyLinkedNode s a -> ST s ()
@@ -243,10 +242,10 @@ fromList xs = do
   pure list
 
 toList :: DoublyLinkedList s a -> ST s [a]
-toList list = next1 list.firstNode >>= go
+toList list = next1 (firstNode list) >>= go
   where
     go :: NextNode s a -> ST s [a]
     go =
       nextNodeToDoublyLinkedNode >>> \case
         Nothing -> pure []
-        Just valueNode -> (valueNode._value :) <$> (next1 valueNode >>= go)
+        Just valueNode -> (_value valueNode :) <$> (next1 valueNode >>= go)

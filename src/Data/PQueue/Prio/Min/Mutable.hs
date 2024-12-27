@@ -1,7 +1,5 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
-{-# LANGUAGE OverloadedRecordDot #-}
-{-# LANGUAGE NoFieldSelectors #-}
 
 module Data.PQueue.Prio.Min.Mutable
   ( -- * Documentation
@@ -57,20 +55,20 @@ singleton k v = do
 
 resizeIfNeeded :: MMinPQueue s k a -> ST s ()
 resizeIfNeeded pqueue = do
-  vec <- readSTRef pqueue.vectorRef
-  size <- readSTRef pqueue.sizeRef
+  vec <- readSTRef (vectorRef pqueue)
+  size <- readSTRef (sizeRef pqueue)
   when (MVector.length vec == size) $ do
     vec' <- MVector.unsafeGrow vec size
-    writeSTRef pqueue.vectorRef vec'
+    writeSTRef (vectorRef pqueue) vec'
 
 insert :: (Ord k) => k -> a -> MMinPQueue s k a -> ST s ()
 insert k v pqueue = do
   resizeIfNeeded pqueue
 
-  n <- readSTRef pqueue.sizeRef
-  vec <- readSTRef pqueue.vectorRef
+  n <- readSTRef (sizeRef pqueue)
+  vec <- readSTRef (vectorRef pqueue)
   MVector.unsafeWrite vec n (k, v)
-  writeSTRef pqueue.sizeRef (n + 1)
+  writeSTRef (sizeRef pqueue) (n + 1)
 
   bubbleUp vec n
 
@@ -90,14 +88,14 @@ bubbleUp vector = go
 
 deleteMin :: (Ord k) => MMinPQueue s k a -> ST s (Maybe (k, a))
 deleteMin pqueue = do
-  n <- readSTRef pqueue.sizeRef
+  n <- readSTRef (sizeRef pqueue)
   if n == 0
     then pure Nothing
     else do
-      vector <- readSTRef pqueue.vectorRef
+      vector <- readSTRef (vectorRef pqueue)
       minNode <- MVector.unsafeRead vector 0
       MVector.unsafeSwap vector 0 (n - 1)
-      writeSTRef pqueue.sizeRef (n - 1)
+      writeSTRef (sizeRef pqueue) (n - 1)
       bubbleDown vector 0 (n - 1)
       pure (Just minNode)
 

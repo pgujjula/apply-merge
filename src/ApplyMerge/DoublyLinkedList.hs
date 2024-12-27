@@ -1,7 +1,5 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
-{-# LANGUAGE OverloadedRecordDot #-}
-{-# LANGUAGE NoFieldSelectors #-}
 
 module ApplyMerge.DoublyLinkedList (applyMerge, applyMergeNonEmpty) where
 
@@ -70,7 +68,7 @@ step f = deleteMinNode >=> lift . uncurry (peekInsertChildren f)
 deleteMinNode ::
   (Ord c) => Frontier s a b c -> MaybeT (Strict.ST s) (Node s a b c, Frontier s a b c)
 deleteMinNode frontier = do
-  (node, queue') <- hoistMaybe (MinPQueue.minView frontier.queue)
+  (node, queue') <- hoistMaybe (MinPQueue.minView (queue frontier))
   let frontier' = Frontier queue'
   pure (node, frontier')
 
@@ -97,8 +95,8 @@ peekInsertChildren f node frontier = do
   frontier' <-
     insertChildA f node frontier
       >>= insertChildB f node
-  DoublyLinked.delete node.position
-  pure (node.value, frontier')
+  DoublyLinked.delete (position node)
+  pure (value node, frontier')
 
 insertChildA ::
   (Ord c) =>
@@ -107,12 +105,12 @@ insertChildA ::
   Frontier s a b c ->
   Strict.ST s (Frontier s a b c)
 insertChildA f node frontier = fmap (fromMaybe frontier) $ runMaybeT $ do
-  let (ia, ib) = DoublyLinked.value node.position
-  nextPosition <- lift $ nextNodeValue node.position
+  let (ia, ib) = DoublyLinked.value (position node)
+  nextPosition <- lift $ nextNodeValue (position node)
   guard (fmap fst nextPosition /= Just (ia + 1))
-  as' <- hoistMaybe (nonEmpty (NonEmpty.tail node.as))
-  let bs' = node.bs
-  position' <- lift (DoublyLinked.insertAfter node.position (ia + 1, ib))
+  as' <- hoistMaybe (nonEmpty (NonEmpty.tail (as node)))
+  let bs' = bs node
+  position' <- lift (DoublyLinked.insertAfter (position node) (ia + 1, ib))
   let value' = f (NonEmpty.head as') (NonEmpty.head bs')
   let node' =
         Node
@@ -121,7 +119,7 @@ insertChildA f node frontier = fmap (fromMaybe frontier) $ runMaybeT $ do
             as = as',
             bs = bs'
           }
-  pure $ Frontier $ MinPQueue.insert value' node' frontier.queue
+  pure $ Frontier $ MinPQueue.insert value' node' (queue frontier)
 
 insertChildB ::
   (Ord c) =>
@@ -130,15 +128,15 @@ insertChildB ::
   Frontier s a b c ->
   Strict.ST s (Frontier s a b c)
 insertChildB f node frontier = fmap (fromMaybe frontier) $ runMaybeT $ do
-  let (ia, ib) = DoublyLinked.value node.position
-  prevPosition <- lift $ prevNodeValue node.position
+  let (ia, ib) = DoublyLinked.value (position node)
+  prevPosition <- lift $ prevNodeValue (position node)
   guard (fmap snd prevPosition /= Just (ib + 1))
-  bs' <- hoistMaybe (nonEmpty (NonEmpty.tail node.bs))
-  let as' = node.as
-  position' <- lift (DoublyLinked.insertBefore node.position (ia, ib + 1))
+  bs' <- hoistMaybe (nonEmpty (NonEmpty.tail (bs node)))
+  let as' = as node
+  position' <- lift (DoublyLinked.insertBefore (position node) (ia, ib + 1))
   let value' = f (NonEmpty.head as') (NonEmpty.head bs')
   let node' = mkNode f position' as' bs'
-  pure $ Frontier $ MinPQueue.insert value' node' frontier.queue
+  pure $ Frontier $ MinPQueue.insert value' node' (queue frontier)
 
 mkNode ::
   (a -> b -> c) ->
