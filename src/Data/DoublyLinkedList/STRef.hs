@@ -1,7 +1,6 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedRecordDot #-}
 
@@ -50,17 +49,17 @@ data DoublyLinkedList s a = DoublyLinkedList
   }
 
 -- | The sentinel node at the beginning of the list.
-newtype FirstNode s a = FirstNode {nextRef :: STRef s (NextNode s a)}
+newtype FirstNode s a = FirstNode {fnNextRef :: STRef s (NextNode s a)}
 
 data DoublyLinkedNode s a = DoublyLinkedNode
   { _value :: a,
-    nextRef :: STRef s (NextNode s a),
-    prevRef :: STRef s (PrevNode s a)
+    dlnNextRef :: STRef s (NextNode s a),
+    dlnPrevRef :: STRef s (PrevNode s a)
   }
 
 -- | The sentinel node at the end of the list.
 newtype LastNode s a = LastNode
-  { prevRef :: STRef s (PrevNode s a)
+  { lnPrevRef :: STRef s (PrevNode s a)
   }
 
 -- | Type for nodes that are after other nodes.
@@ -99,9 +98,9 @@ instance HasNext FirstNode where
   {-# INLINE toPrev1 #-}
 
 instance HasNext DoublyLinkedNode where
-  next1 valueNode = readSTRef valueNode.nextRef
+  next1 valueNode = readSTRef valueNode.dlnNextRef
   {-# INLINE next1 #-}
-  setNext1 valueNode nextNode = writeSTRef valueNode.nextRef (toNext1 nextNode)
+  setNext1 valueNode nextNode = writeSTRef valueNode.dlnNextRef (toNext1 nextNode)
   {-# INLINE setNext1 #-}
   toPrev1 = PrevNode . Right
   {-# INLINE toPrev1 #-}
@@ -129,9 +128,9 @@ class HasPrev node where
   {-# MINIMAL #-}
 
 instance HasPrev DoublyLinkedNode where
-  prev1 valueNode = readSTRef valueNode.prevRef
+  prev1 valueNode = readSTRef valueNode.dlnPrevRef
   {-# INLINE prev1 #-}
-  setPrev1 valueNode prevNode = writeSTRef valueNode.prevRef (toPrev1 prevNode)
+  setPrev1 valueNode prevNode = writeSTRef valueNode.dlnPrevRef (toPrev1 prevNode)
   {-# INLINE setPrev1 #-}
   toNext1 = NextNode . Left
   {-# INLINE toNext1 #-}
@@ -155,7 +154,7 @@ instance HasPrev NextNode where
 
 null :: DoublyLinkedList s a -> ST s Bool
 null list = do
-  nextNode <- readSTRef list.firstNode.nextRef
+  nextNode <- readSTRef list.firstNode.fnNextRef
   case nextNode of
     NextNode (Left _) -> pure False
     _ -> pure True
@@ -167,26 +166,26 @@ value = _value
 
 head :: DoublyLinkedList s a -> ST s (Maybe (DoublyLinkedNode s a))
 head list =
-  readSTRef list.firstNode.nextRef >>= \case
+  readSTRef list.firstNode.fnNextRef >>= \case
     NextNode (Left doublyLinkedNode) -> pure (Just doublyLinkedNode)
     _ -> pure Nothing
 
 last :: DoublyLinkedList s a -> ST s (Maybe (DoublyLinkedNode s a))
 last list =
-  readSTRef list.lastNode.prevRef >>= \case
+  readSTRef list.lastNode.lnPrevRef >>= \case
     PrevNode (Right doublyLinkedNode) -> pure (Just doublyLinkedNode)
     _ -> pure Nothing
 
 next :: DoublyLinkedNode s a -> ST s (Maybe (DoublyLinkedNode s a))
 next valueNode = do
-  nextNode <- readSTRef valueNode.nextRef
+  nextNode <- readSTRef valueNode.dlnNextRef
   pure $ case nextNode of
     NextNode (Left valueNode') -> Just valueNode'
     _ -> Nothing
 
 prev :: DoublyLinkedNode s a -> ST s (Maybe (DoublyLinkedNode s a))
 prev valueNode = do
-  prevNode <- readSTRef valueNode.prevRef
+  prevNode <- readSTRef valueNode.dlnPrevRef
   pure $ case prevNode of
     PrevNode (Right valueNode') -> Just valueNode'
     _ -> Nothing
@@ -195,8 +194,8 @@ empty :: ST s (DoublyLinkedList s a)
 empty = do
   firstNode <- FirstNode <$> newSTRef undefined
   lastNode <- LastNode <$> newSTRef undefined
-  writeSTRef firstNode.nextRef (NextNode (Right lastNode))
-  writeSTRef lastNode.prevRef (PrevNode (Left firstNode))
+  writeSTRef firstNode.fnNextRef (NextNode (Right lastNode))
+  writeSTRef lastNode.lnPrevRef (PrevNode (Left firstNode))
   pure (DoublyLinkedList firstNode lastNode)
 
 insertAfter1 :: (HasNext node) => node s a -> a -> ST s (DoublyLinkedNode s a)
