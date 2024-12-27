@@ -42,6 +42,14 @@ library
       ApplyMerge.IntSet
   hs-source-dirs:
       src
+  default-extensions:
+      FlexibleContexts
+      ImportQualifiedPost
+      NamedFieldPuns
+      RankNTypes
+      ScopedTypeVariables
+      TupleSections
+      TypeApplications
   ghc-options: -Wall -Wunused-packages
   build-depends:
       array ==0.5.*
@@ -50,7 +58,7 @@ library
     , pqueue >=1.4 && <1.5 || >=1.5 && <1.6
     , reflection ==2.1.*
     , text >=1.2 && <1.3 || >=2.0 && <2.1 || >=2.1 && <2.2
-  default-language: GHC2021
+  default-language: Haskell2010
 
 test-suite apply-merge-tests
   type: exitcode-stdio-1.0
@@ -75,6 +83,14 @@ test-suite apply-merge-tests
   hs-source-dirs:
       src
       test
+  default-extensions:
+      FlexibleContexts
+      ImportQualifiedPost
+      NamedFieldPuns
+      RankNTypes
+      ScopedTypeVariables
+      TupleSections
+      TypeApplications
   ghc-options: -Wall -Wunused-packages
   build-depends:
       array ==0.5.*
@@ -90,7 +106,7 @@ test-suite apply-merge-tests
     , text >=1.2 && <1.3 || >=2.0 && <2.1 || >=2.1 && <2.2
     , transformers >=0.5 && <0.6 || >=0.6 && <0.7
     , vector >=0.12 && <0.13 || >=0.13 && <0.14
-  default-language: GHC2021
+  default-language: Haskell2010
 
 benchmark apply-merge-benchmarks
   type: exitcode-stdio-1.0
@@ -111,6 +127,14 @@ benchmark apply-merge-benchmarks
   hs-source-dirs:
       src
       bench
+  default-extensions:
+      FlexibleContexts
+      ImportQualifiedPost
+      NamedFieldPuns
+      RankNTypes
+      ScopedTypeVariables
+      TupleSections
+      TypeApplications
   ghc-options: -Wall -Wunused-packages
   build-depends:
       array ==0.5.*
@@ -123,4 +147,4 @@ benchmark apply-merge-benchmarks
     , text >=1.2 && <1.3 || >=2.0 && <2.1 || >=2.1 && <2.2
     , transformers >=0.5 && <0.6 || >=0.6 && <0.7
     , vector >=0.12 && <0.13 || >=0.13 && <0.14
-  default-language: GHC2021
+  default-language: Haskell2010

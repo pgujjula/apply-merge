@@ -27,7 +27,16 @@ extra-doc-files:
 - docs/Benchmark.md
 - LICENSES/BSD-3-Clause.txt
 
-language: GHC2021
+language: Haskell2010
+
+default-extensions:
+- FlexibleContexts
+- ImportQualifiedPost
+- NamedFieldPuns
+- RankNTypes
+- ScopedTypeVariables
+- TupleSections
+- TypeApplications
 
 ghc-options:
 - -Wall
