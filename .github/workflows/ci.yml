@@ -60,7 +60,7 @@ jobs:
           --enable-benchmarks
           --ghc-options="-Werror -Wall"
       - run: cabal update
-      - run: cabal outdated --exit-code
+      - run: cabal outdated --exit-code --ignore=base
       - run: cabal freeze
       - run: cabal build
       - run: cabal test
