@@ -6,13 +6,13 @@ module ApplyMerge.IntMap (applyMerge, applyMergeNonEmpty) where
 import Control.Arrow ((>>>))
 import Control.Monad (guard)
 import Data.IntMap.Strict (IntMap)
-import Data.IntMap.Strict qualified as IntMap
+import qualified Data.IntMap.Strict as IntMap
 import Data.List (unfoldr)
 import Data.List.NonEmpty (NonEmpty ((:|)), nonEmpty)
-import Data.List.NonEmpty qualified as NonEmpty
+import qualified Data.List.NonEmpty as NonEmpty
 import Data.Maybe (fromMaybe)
 import Data.PQueue.Prio.Min (MinPQueue)
-import Data.PQueue.Prio.Min qualified as MinPQueue
+import qualified Data.PQueue.Prio.Min as MinPQueue
 
 data Node a b c = Node
   { position :: (Int, Int),

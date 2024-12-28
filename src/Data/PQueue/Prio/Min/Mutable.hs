@@ -21,9 +21,9 @@ where
 import Control.Monad (when)
 import Control.Monad.ST (ST)
 import Data.STRef (STRef, newSTRef, readSTRef, writeSTRef)
-import Data.Vector qualified as Vector
+import qualified Data.Vector as Vector
 import Data.Vector.Mutable (MVector)
-import Data.Vector.Mutable qualified as MVector
+import qualified Data.Vector.Mutable as MVector
 
 data MMinPQueue s k a
   = MMinPQueue

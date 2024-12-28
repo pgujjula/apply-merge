@@ -18,9 +18,9 @@ module Data.List.NonEmpty.ApplyMerge
   )
 where
 
-import ApplyMerge.IntSet qualified
+import qualified ApplyMerge.IntSet
 import Data.List.NonEmpty (NonEmpty)
-import Data.List.NonEmpty qualified as NonEmpty
+import qualified Data.List.NonEmpty as NonEmpty
 import Data.Proxy (Proxy (..))
 import Data.Reflection (Reifies, reflect, reify)
 import Data.Semigroup (Arg (..))

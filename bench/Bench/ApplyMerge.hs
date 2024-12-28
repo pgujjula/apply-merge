@@ -5,10 +5,10 @@
 
 module Bench.ApplyMerge (benchmarks) where
 
-import ApplyMerge.DoublyLinkedList qualified
-import ApplyMerge.IntMap qualified
-import ApplyMerge.IntSet qualified
-import ApplyMerge.MergeAll qualified
+import qualified ApplyMerge.DoublyLinkedList
+import qualified ApplyMerge.IntMap
+import qualified ApplyMerge.IntSet
+import qualified ApplyMerge.MergeAll
 import Data.Function ((&))
 #if !MIN_VERSION_base(4,20,0)
 import Data.Foldable (foldl')

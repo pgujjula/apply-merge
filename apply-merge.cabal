@@ -46,7 +46,6 @@ library
       src
   default-extensions:
       FlexibleContexts
-      ImportQualifiedPost
       NamedFieldPuns
       RankNTypes
       ScopedTypeVariables
@@ -87,7 +86,6 @@ test-suite apply-merge-tests
       test
   default-extensions:
       FlexibleContexts
-      ImportQualifiedPost
       NamedFieldPuns
       RankNTypes
       ScopedTypeVariables
@@ -131,7 +129,6 @@ benchmark apply-merge-benchmarks
       bench
   default-extensions:
       FlexibleContexts
-      ImportQualifiedPost
       NamedFieldPuns
       RankNTypes
       ScopedTypeVariables

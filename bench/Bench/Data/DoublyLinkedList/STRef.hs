@@ -18,7 +18,7 @@ import Data.DoublyLinkedList.STRef
     value,
   )
 import Data.Map (Map)
-import Data.Map qualified as Map
+import qualified Data.Map as Map
 import Data.Maybe (fromMaybe)
 import Test.Tasty.Bench (Benchmark, bench, bgroup, nf)
 import Prelude hiding (head, last, null)

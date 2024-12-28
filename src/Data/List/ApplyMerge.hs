@@ -23,15 +23,15 @@ module Data.List.ApplyMerge
   )
 where
 
-import ApplyMerge.IntSet qualified
+import qualified ApplyMerge.IntSet
 import Data.Array (Array, (!))
-import Data.Array qualified as Array
+import qualified Data.Array as Array
 import Data.Function ((&))
 import Data.Proxy (Proxy (..))
 import Data.Reflection (Reifies, reflect, reify)
 import Data.Semigroup (Arg (..))
 import Data.Text (Text)
-import Data.Text qualified as Text
+import qualified Data.Text as Text
 
 -- | If given a binary function @f@ that is non-decreasing in both arguments,
 --   and two (potentially infinite) ordered lists @xs@ and @ys@, then

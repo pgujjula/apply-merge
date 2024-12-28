@@ -4,16 +4,16 @@
 module ApplyMerge.DoublyLinkedList (applyMerge, applyMergeNonEmpty) where
 
 import Control.Monad (guard, (>=>))
-import Control.Monad.ST qualified as Strict
-import Control.Monad.ST.Lazy qualified as Lazy
+import qualified Control.Monad.ST as Strict
+import qualified Control.Monad.ST.Lazy as Lazy
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Maybe (MaybeT (..), runMaybeT)
-import Data.DoublyLinkedList.STRef qualified as DoublyLinked
+import qualified Data.DoublyLinkedList.STRef as DoublyLinked
 import Data.List.NonEmpty (NonEmpty ((:|)), nonEmpty)
-import Data.List.NonEmpty qualified as NonEmpty
+import qualified Data.List.NonEmpty as NonEmpty
 import Data.Maybe (fromMaybe)
 import Data.PQueue.Prio.Min (MinPQueue)
-import Data.PQueue.Prio.Min qualified as MinPQueue
+import qualified Data.PQueue.Prio.Min as MinPQueue
 
 data Node s a b c = Node
   { position :: DoublyLinked.DoublyLinkedNode s (Int, Int),

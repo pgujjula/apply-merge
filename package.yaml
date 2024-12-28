@@ -33,7 +33,6 @@ language: Haskell2010
 
 default-extensions:
 - FlexibleContexts
-- ImportQualifiedPost
 - NamedFieldPuns
 - RankNTypes
 - ScopedTypeVariables

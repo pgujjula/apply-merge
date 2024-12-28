@@ -3,13 +3,13 @@
 
 module Main (main) where
 
-import Test.ApplyMerge.DoublyLinkedList qualified (tests)
-import Test.ApplyMerge.IntMap qualified (tests)
-import Test.ApplyMerge.IntSet qualified (tests)
-import Test.ApplyMerge.MergeAll qualified (tests)
-import Test.Data.DoublyLinkedList.STRef qualified (tests)
-import Test.Data.List.ApplyMerge qualified (tests)
-import Test.Data.PQueue.Prio.Min.Mutable qualified (tests)
+import qualified Test.ApplyMerge.DoublyLinkedList (tests)
+import qualified Test.ApplyMerge.IntMap (tests)
+import qualified Test.ApplyMerge.IntSet (tests)
+import qualified Test.ApplyMerge.MergeAll (tests)
+import qualified Test.Data.DoublyLinkedList.STRef (tests)
+import qualified Test.Data.List.ApplyMerge (tests)
+import qualified Test.Data.PQueue.Prio.Min.Mutable (tests)
 import Test.Tasty (TestTree, defaultMain, testGroup)
 
 main :: IO ()

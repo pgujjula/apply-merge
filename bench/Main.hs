@@ -3,10 +3,10 @@
 
 module Main (main) where
 
-import Bench.ApplyMerge qualified
-import Bench.Data.DoublyLinkedList.STRef qualified
-import Bench.Data.PQueue.Prio.Min qualified
-import Bench.Data.PQueue.Prio.Min.Mutable qualified
+import qualified Bench.ApplyMerge
+import qualified Bench.Data.DoublyLinkedList.STRef
+import qualified Bench.Data.PQueue.Prio.Min
+import qualified Bench.Data.PQueue.Prio.Min.Mutable
 import Test.Tasty.Bench (defaultMain)
 
 main :: IO ()
