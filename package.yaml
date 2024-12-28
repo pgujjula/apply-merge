@@ -14,6 +14,7 @@ copyright:    "Preetham Gujjula"
 license:      BSD-3-Clause
 
 tested-with:
+- GHC == 8.10.7
 - GHC == 9.0.2
 - GHC == 9.2.8
 - GHC == 9.4.8
@@ -44,7 +45,7 @@ ghc-options:
 - -Wunused-packages
 
 dependencies:
-- base ^>= {4.15, 4.16, 4.17, 4.18, 4.19, 4.20}
+- base ^>= {4.14, 4.15, 4.16, 4.17, 4.18, 4.19, 4.20}
 
 library:
   source-dirs: src
