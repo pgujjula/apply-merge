@@ -1,5 +1,6 @@
 -- SPDX-FileCopyrightText: Copyright Preetham Gujjula
 -- SPDX-License-Identifier: BSD-3-Clause
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE ImpredicativeTypes #-}
 
 module Bench.ApplyMerge (benchmarks) where
@@ -9,6 +10,9 @@ import ApplyMerge.IntMap qualified
 import ApplyMerge.IntSet qualified
 import ApplyMerge.MergeAll qualified
 import Data.Function ((&))
+#if !MIN_VERSION_base(4,20,0)
+import Data.Foldable (foldl')
+#endif
 import Data.List.Ordered (minus)
 import Test.Tasty.Bench (Benchmark, bench, bgroup, nf)
 
@@ -55,7 +59,7 @@ benchmarks =
 
             composites :: [Int]
             composites = applyMerge (\p j -> p * (p + j)) primes [zero ..]
-         in sum (takeWhile (<= n) primes)
+         in foldl' (+) 0 (takeWhile (<= n) primes)
     ]
 
 type ApplyMerge = forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
@@ -68,7 +72,7 @@ funcToCollapse f applyMerge n =
   let one = (n `quot` maxBound) + 1
    in applyMerge f [one ..] [one ..]
         & take n
-        & sum
+        & foldl' (+) 0
 
 collapseToBenchmark :: String -> (ApplyMerge -> Int -> Int) -> Benchmark
 collapseToBenchmark name collapse = bgroup name (map mkBench [1 .. 6])
