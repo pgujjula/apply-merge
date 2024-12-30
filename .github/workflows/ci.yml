@@ -12,32 +12,32 @@ jobs:
     name: Generate matrix from cabal
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Extract the tested GHC versions
         id: set-matrix
         uses: kleidukos/get-tested@v0.1.7.0
         with:
           cabal-file: apply-merge.cabal
-          ubuntu-version: latest
+          ubuntu-version: 22.04
           version: 0.1.7.0
   reuse_compliance_check:
     name: REUSE compliance check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: REUSE Compliance Check
         uses: fsfe/reuse-action@v3
   ormolu:
     name: Ormolu check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: haskell-actions/run-ormolu@v16
   cabal_test:
     name: cabal test - ghc-${{ matrix.ghc }}
     needs: generate-matrix
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     continue-on-error: false
     strategy:
       matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
