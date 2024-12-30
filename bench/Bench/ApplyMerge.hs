@@ -82,7 +82,14 @@ collapseToBenchmark name collapse = bgroup name (map mkBench [1 .. 6])
       let limit :: Int
           limit = 10 ^ i
 
-          applyMerges :: [(String, ApplyMerge)]
+          -- For some reason, GHC 8.0 complains if we set the signature
+          --   applyMerges :: [(String, ApplyMerge)]
+          -- We can remove this hack once we drop support for GHC 8.0
+          applyMerges ::
+            [ ( String,
+                forall a b c. (Ord c) => (a -> b -> c) -> [a] -> [b] -> [c]
+              )
+            ]
           applyMerges =
             [ ("DoublyLinkedList", ApplyMerge.DoublyLinkedList.applyMerge),
               ("IntMap", ApplyMerge.IntMap.applyMerge),
