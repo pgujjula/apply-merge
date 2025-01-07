@@ -15,6 +15,7 @@ SPDX-License-Identifier: BSD-3-Clause
 | Revision 1      | 2024-05-13 | [`0.1.1.0-rev1`] |
 | Revision 2      | 2024-06-25 | [`0.1.1.0-rev2`] |
 | Revision 3      | 2024-12-11 | [`0.1.1.0-rev3`] |
+| Revision 4      | 2025-01-07 | [`0.1.1.0-rev4`] |
 
 ### Added
 * Implementation of `applyMergeOn`
@@ -51,6 +52,7 @@ SPDX-License-Identifier: BSD-3-Clause
   feedback from _meeeow_ on Haskell Discourse
   ([link](https://discourse.haskell.org/t/apply-merge-lift-a-binary-increasing-function-onto-ordered-lists-and-produce-ordered-output/9269/4)).
 
+[`0.1.1.0-rev4`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.1.0-rev4
 [`0.1.1.0-rev3`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.1.0-rev3
 [`0.1.1.0-rev2`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.1.0-rev2
 [`0.1.1.0-rev1`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.1.0-rev1
