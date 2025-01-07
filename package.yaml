@@ -26,6 +26,7 @@ tested-with:
 - GHC == 9.6.6
 - GHC == 9.8.4
 - GHC == 9.10.1
+- GHC == 9.12.1
 
 extra-doc-files:
 - README.md
@@ -52,7 +53,7 @@ when:
   - -Wunused-packages
 
 dependencies:
-- base ^>= {4.9, 4.10, 4.11, 4.12, 4.13, 4.14, 4.15, 4.16, 4.17, 4.18, 4.19, 4.20}
+- base ^>= {4.9, 4.10, 4.11, 4.12, 4.13, 4.14, 4.15, 4.16, 4.17, 4.18, 4.19, 4.20, 4.21}
 
 library:
   source-dirs: src
