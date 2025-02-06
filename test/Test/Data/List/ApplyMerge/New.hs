@@ -22,7 +22,9 @@ import Data.Bifunctor (bimap)
 import Data.Function (on)
 import Data.Kind (Constraint, Type)
 import Data.List (sort)
+#if MIN_VERSION_base(4,15,0)
 import qualified Data.List as List
+#endif
 import qualified Data.List.ApplyMerge as List (applyMerge, applyMergeBy, applyMergeOn)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NonEmpty
@@ -61,12 +63,12 @@ genericTestApplyMerge label (applyMerge, applyMergeOn, applyMergeBy) =
   testGroup
     label
     [ testGenericApplyMerge applyMerge "applyMerge f xs ys" "f",
-      testGroup "applyMergeOn proj f xs ys" . List.singleton $
+      testGroup "applyMergeOn proj f xs ys" . singleton $
         let applyMergeViaOn :: ApplyMerge f
             applyMergeViaOn f xs ys =
               fmap (uncurry f) (applyMergeOn (uncurry f) (,) xs ys)
          in testGenericApplyMerge applyMergeViaOn "f = (,)" "proj",
-      testGroup "applyMergeBy cmp f xs ys" . List.singleton $
+      testGroup "applyMergeBy cmp f xs ys" . singleton $
         testGenericApplyMerge (applyMergeBy compare) "cmp = compare" "f"
     ]
 
@@ -221,3 +223,11 @@ getInfinite1 :: Infinite1 f a -> f a
 getInfinite1 = \case
   InfiniteList1 xs -> getInfiniteList xs
   InfiniteNonEmpty1 x xs -> x :| getInfiniteList xs
+
+-- Utilities
+singleton :: a -> [a]
+#if MIN_VERSION_base(4,15,0)
+singleton = List.singleton
+#else
+singleton x = [x]
+#endif
