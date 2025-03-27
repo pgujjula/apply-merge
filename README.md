@@ -13,6 +13,11 @@ SPDX-License-Identifier: BSD-3-Clause
 
 Lift a binary, non-decreasing function onto ordered lists and order the output
 
+## External Discussions
+
+* Reddit thread: [link](https://www.reddit.com/r/haskell/comments/1bwpe33/applymerge_lift_a_binary_nondecreasing_function/)
+* Haskell Discourse thread: [link](https://discourse.haskell.org/t/apply-merge-lift-a-binary-increasing-function-onto-ordered-lists-and-produce-ordered-output/9269)
+
 ## Overview
 
 This library provides a function
