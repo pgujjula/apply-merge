@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: Copyright Preetham Gujjula
 # SPDX-License-Identifier: BSD-3-Clause
-spec-version: 0.36.0
+spec-version: 0.37.0
 name:         apply-merge
 version:      0.1.1.0
 synopsis:     Lift a binary, non-decreasing function onto ordered lists and order the output
