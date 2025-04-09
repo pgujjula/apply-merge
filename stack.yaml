@@ -5,6 +5,3 @@ resolver: lts-21.25
 
 packages:
 - .
-
-extra-deps:
-- falsify-0.2.0@sha256:82ad5e999a80bf9e7a5bcb2fe17c2b9524a95893ff19fcdbf3ef4a671303e444,5451
