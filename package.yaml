@@ -12,6 +12,7 @@ author:       "Preetham Gujjula"
 maintainer:   "Preetham Gujjula <libraries@mail.preetham.io>"
 copyright:    "Preetham Gujjula"
 license:      BSD-3-Clause
+license-file: LICENSES/BSD-3-Clause.txt
 
 tested-with:
 - GHC == 8.0.2
