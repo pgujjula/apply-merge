@@ -66,7 +66,7 @@ library:
   dependencies:
   - array ^>= {0.5}
   - containers ^>= {0.6, 0.7, 0.8}
-  - pqueue ^>= {1.4, 1.5}
+  - pqueue ^>= {1.4, 1.5, 1.6}
   - reflection ^>= {2.1}
   - text ^>= {1.2, 2.0, 2.1}
 
@@ -90,7 +90,7 @@ tests:
     - array ^>= {0.5}
     - containers ^>= {0.6, 0.7, 0.8}
     - data-ordlist ^>= {0.4}
-    - pqueue ^>= {1.4, 1.5}
+    - pqueue ^>= {1.4, 1.5, 1.6}
     - reflection ^>= {2.1}
     - tasty ^>= {1.4, 1.5}
     - tasty-expected-failure ^>= {0.12}
@@ -110,7 +110,7 @@ benchmarks:
     - array ^>= {0.5}
     - containers ^>= {0.6, 0.7, 0.8}
     - data-ordlist ^>= {0.4}
-    - pqueue ^>= {1.4, 1.5}
+    - pqueue ^>= {1.4, 1.5, 1.6}
     - reflection ^>= {2.1}
     - tasty-bench ^>= {0.3, 0.4}
     - text ^>= {1.2, 2.0, 2.1}
