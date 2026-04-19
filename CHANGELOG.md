@@ -19,6 +19,7 @@ SPDX-License-Identifier: BSD-3-Clause
 | Revision 5      | 2025-03-02 | [`0.1.1.0-rev5`] |
 | Revision 6      | 2025-10-12 | [`0.1.1.0-rev6`] |
 | Revision 7      | 2025-12-29 | [`0.1.1.0-rev7`] |
+| Revision 8      | 2026-04-19 | [`0.1.1.0-rev8`] |
 
 ### Added
 * Implementation of `applyMergeOn`
@@ -30,6 +31,7 @@ SPDX-License-Identifier: BSD-3-Clause
   ([#8](https://github.com/pgujjula/apply-merge/issues/8)).
 * Support for GHC 9.10 (beginning in Revision 1)
 * Support for GHC 9.12 (beginning in Revision 4)
+* Support for GHC 9.14 (beginning in Revision 8)
 
 ### Changed
 * Switched from falsify to QuickCheck in the test suite, allowing the
@@ -56,6 +58,7 @@ SPDX-License-Identifier: BSD-3-Clause
   feedback from _meeeow_ on Haskell Discourse
   ([link](https://discourse.haskell.org/t/apply-merge-lift-a-binary-increasing-function-onto-ordered-lists-and-produce-ordered-output/9269/4)).
 
+[`0.1.1.0-rev8`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.1.0-rev8
 [`0.1.1.0-rev7`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.1.0-rev7
 [`0.1.1.0-rev6`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.1.0-rev6
 [`0.1.1.0-rev5`]: https://github.com/pgujjula/apply-merge/releases/tag/0.1.1.0-rev5
