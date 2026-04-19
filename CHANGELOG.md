@@ -29,6 +29,7 @@ SPDX-License-Identifier: BSD-3-Clause
 * Comprehensive benchmark suite for `applyMerge`
   ([#8](https://github.com/pgujjula/apply-merge/issues/8)).
 * Support for GHC 9.10 (beginning in Revision 1)
+* Support for GHC 9.12 (beginning in Revision 4)
 
 ### Changed
 * Switched from falsify to QuickCheck in the test suite, allowing the
